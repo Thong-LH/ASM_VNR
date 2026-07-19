@@ -1,13 +1,14 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import detailedContent from '../../data/detailedContent';
+// Panel thuyết minh hiện vật bên phải/trái màn hình (được tái sử dụng cho tất cả các phòng)
+function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, detailedContent }) {
+  if (!selectedObjectId || !showUI || isEditMode || !detailedContent) return null;
 
-// Panel thuyết minh hiện vật bên phải/trái màn hình
-function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose }) {
-  if (!selectedObjectId || !showUI || isEditMode) return null;
+  // Nếu hiện vật nằm ở góc bên phải, ta lật Panel thuyết minh sang trái để không bị đè lên nhau
+  const isRightAlignedObj = selectedObjectId === 'obj_loa' || selectedObjectId === 'obj_radio' || selectedObjectId === 'obj_diacau';
 
   return (
-    <div className={`museum-side-panel ui-interactive ${selectedObjectId === 'obj_loa' ? 'left-aligned' : ''}`}>
+    <div className={`museum-side-panel ui-interactive ${isRightAlignedObj ? 'left-aligned' : ''}`}>
       <button className="side-panel-close-btn" onClick={onClose}>
         <X size={18} />
       </button>

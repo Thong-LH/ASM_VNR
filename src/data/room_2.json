@@ -1,0 +1,117 @@
+{
+  "room_id": "room_2_dai_hoi_vi",
+  "background": {
+    "url": "/assets/background2.png",
+    "z_index": 0
+  },
+  "interactive_objects": [
+    {
+      "id": "obj_vankien",
+      "image_url": "/assets/vankien.png",
+      "position": [
+        0.55,
+        -0.42,
+        0.5
+      ],
+      "scale": [
+        1.02,
+        0.66,
+        1
+      ],
+      "content": {
+        "title": "Tinh thần \"Nhìn thẳng vào sự thật\"",
+        "desc": "Tháng 12/1986, Đại hội đại biểu toàn quốc lần thứ VI diễn ra, đánh dấu một cột mốc lịch sử mang tính bước ngoặt. Đối mặt với cuộc khủng hoảng kinh tế - xã hội trầm trọng, Đảng đã thể hiện tinh thần dũng cảm \"nhìn thẳng vào sự thật\", thẳng thắn thừa nhận những sai lầm do chủ quan, duy ý chí. Từ đó, Đại hội đúc kết 4 bài học xương máu, trong đó tư tưởng \"lấy dân làm gốc\" được đặt lên hàng đầu, mở đường cho công cuộc đổi mới toàn diện đất nước."
+      }
+    },
+    {
+      "id": "obj_tobao",
+      "image_url": "/assets/tobao.png",
+      "position": [
+        -0.98,
+        0.73,
+        0.5
+      ],
+      "scale": [
+        0.9,
+        0.9,
+        1
+      ],
+      "content": {
+        "title": "Chuyển dịch Nền kinh tế",
+        "desc": "Một trong những đột phá lớn nhất của Đại hội VI là việc từ bỏ tư duy độc quyền của thành phần kinh tế quốc doanh. Đảng chính thức khai tử cơ chế quản lý hành chính, quan liêu, bao cấp từng kìm hãm sự phát triển bấy lâu. Thay vào đó, nền kinh tế nhiều thành phần được thừa nhận, chuyển hướng sang hạch toán kinh doanh và tôn trọng các quy luật khách quan của thị trường, qua đó khơi dậy mạnh mẽ mọi nguồn lực và tiềm năng trong xã hội."
+      }
+    },
+    {
+      "id": "obj_sodo",
+      "image_url": "/assets/sodo.png",
+      "position": [
+        0.69,
+        0.78,
+        0.2
+      ],
+      "scale": [
+        1.8,
+        0.9,
+        1
+      ],
+      "content": {
+        "title": "Ba Chương trình Kinh tế lớn",
+        "desc": "Cùng với đổi mới tư duy, các chính sách xã hội cũng được điều chỉnh with phương châm lấy con người làm mục tiêu và động lực. Trọng tâm của giai đoạn này là việc dồn toàn lực để thực hiện thành công ba chương trình kinh tế: Lương thực - thực phẩm, Hàng tiêu dùng và Hàng xuất khẩu. Đây được xem là mũi nhọn chiến lược, giải pháp thiết thực nhất nhằm giải quyết dứt điểm tình trạng thiếu hụt nhu yếu phẩm, giảm thiểu thất nghiệp và đẩy lùi đói nghèo."
+      }
+    },
+    {
+      "id": "obj_radio",
+      "image_url": "/assets/radio.png",
+      "position": [
+        3.81,
+        -0.5,
+        0.5
+      ],
+      "scale": [
+        0.93,
+        0.63,
+        1
+      ],
+      "content": {
+        "title": "Đối ngoại mở cửa",
+        "desc": "Để phá vỡ thế bao vây và cô lập về kinh tế, Việt Nam đã chủ động thay đổi chiến lược ngoại giao, chuyển dịch từ đối đầu sang đối thoại. Với tinh thần \"Việt Nam muốn là bạn với tất cả các nước\", nhà nước đã từng bước rút quân khỏi Campuchia và nỗ lực bình thường hóa quan hệ quốc tế. Việc ban hành Luật Đầu tư nước ngoài vào năm 1987 là một bước đi táo bạo, mở toang cánh cửa để thu hút nguồn vốn FDI, đưa đất nước hội nhập."
+      }
+    },
+    {
+      "id": "obj_nghiquyet10",
+      "image_url": "/assets/nghiquyet10.png",
+      "position": [
+        -3.64,
+        -0.62,
+        0.5
+      ],
+      "scale": [
+        0.63,
+        0.53,
+        1
+      ],
+      "content": {
+        "title": "Đột phá \"Khoán 10\" (4/1988)",
+        "desc": "Tháng 4/1988, Nghị quyết số 10-NQ/TW ra đời, tạo ra \"cú hích\" giải phóng sức sản xuất nông nghiệp. Bằng việc giao khoán ruộng đất lâu dài và thừa nhận hộ gia đình là đơn vị kinh tế tự chủ, Khoán 10 đã xóa bỏ triệt để tình trạng \"cha chung không ai khóc\". Động lực lao động của nông dân bùng nổ, tạo ra phép màu: chỉ sau một năm, từ chỗ thiếu đói kinh niên, Việt Nam vươn lên xuất khẩu 1,4 triệu tấn gạo, xếp thứ ba thế giới."
+      }
+    },
+    {
+      "id": "obj_tv",
+      "image_url": "/assets/tv.png",
+      "position": [
+        -1.23,
+        -0.25,
+        0.5
+      ],
+      "scale": [
+        1.14,
+        1.12,
+        1
+      ],
+      "content": {
+        "title": "Vô tuyến truyền hình",
+        "desc": "Phương tiện truyền thông mang tính đột phá của những năm đầu Đổi Mới, giúp người dân cập nhật kịp thời các chủ trương chính sách cải cách kinh tế, cùng các tin tức thời sự trong và ngoài nước."
+      }
+    }
+  ]
+}

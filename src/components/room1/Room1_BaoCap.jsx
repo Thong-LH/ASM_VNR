@@ -1,7 +1,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
-import { ChevronDown, MessageSquare } from 'lucide-react';
+import { ChevronDown, MessageSquare, ChevronRight } from 'lucide-react';
 import initialRoomData from '../../data/room_1.json';
 import { useGeminiChat } from '../../hooks/useGeminiChat';
 import Scene from './Scene';
@@ -9,7 +9,7 @@ import SidePanel from './SidePanel';
 import ChatBox from './ChatBox';
 import EditModeToolbar from './EditModeToolbar';
 
-export default function Room1_BaoCap() {
+export default function Room1_BaoCap({ onRoomChange, prevRoom }) {
   const [roomData, setRoomData] = useState(initialRoomData);
   const [selectedObjectId, setSelectedObjectId] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -21,6 +21,22 @@ export default function Room1_BaoCap() {
   const [chatOpen, setChatOpen] = useState(false);
   const [mascotState, setMascotState] = useState('idle');
   const [contextText, setContextText] = useState('');
+  const [exitingToRoom, setExitingToRoom] = useState(null);
+
+  // Tính toán hướng bay ra và bay vào của robot mascot
+  const getTransitionDirection = (from, to) => {
+    const orders = { room1: 1, room2: 2, room3: 3 };
+    if (!from || !to) return null;
+    return orders[to] > orders[from] ? 'forward' : 'backward';
+  };
+
+  const entryDirection = getTransitionDirection(prevRoom, 'room1');
+  const exitDirection = exitingToRoom ? getTransitionDirection('room1', exitingToRoom) : null;
+
+  const handleRoomSwitch = (targetRoom) => {
+    setDropdownOpen(false);
+    setExitingToRoom(targetRoom);
+  };
 
   // Tải nội dung giáo trình khi ứng dụng khởi chạy
   useEffect(() => {
@@ -66,7 +82,7 @@ export default function Room1_BaoCap() {
   };
 
   return (
-    <div className="room-container" style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
+    <div className={`room-container ${exitingToRoom ? 'room-exit-active' : ''}`} style={{ width: '100%', height: '100%', position: 'relative', overflow: 'hidden' }}>
 
       {/* Thanh Điều hướng Navbar Kính mờ (Glassmorphism) */}
       <header className="museum-navbar">
@@ -87,11 +103,11 @@ export default function Room1_BaoCap() {
                 <button className="dropdown-item active" onClick={() => { setDropdownOpen(false); setSelectedObjectId(null); }}>
                   Phòng 1: Thời Bao Cấp (Đang xem)
                 </button>
-                <button className="dropdown-item disabled" onClick={() => { setDropdownOpen(false); setModalContent({ title: "Phòng 2: Thời Mở Cửa", desc: "Không gian trưng bày tái hiện thời kỳ Đổi Mới và Mở Cửa Kinh Tế (sau năm 1986) đang trong quá trình thiết kế và sẽ sớm ra mắt." }); }}>
-                  Phòng 2: Thời Mở Cửa (Sắp ra mắt)
+                <button className="dropdown-item" onClick={() => handleRoomSwitch('room2')}>
+                  Phòng 2: Đại hội VI & Đổi mới
                 </button>
-                <button className="dropdown-item disabled" onClick={() => { setDropdownOpen(false); setModalContent({ title: "Phòng 3: Kỷ Nguyên Số", desc: "Không gian trưng bày tương tác về làn sóng Công nghệ thông tin và Kỷ nguyên số hóa tại Việt Nam đang được phát triển." }); }}>
-                  Phòng 3: Kỷ Nguyên Số (Sắp ra mắt)
+                <button className="dropdown-item" onClick={() => handleRoomSwitch('room3')}>
+                  Phòng 3: Thành tựu 1991–1995
                 </button>
               </div>
             )}
@@ -117,7 +133,12 @@ export default function Room1_BaoCap() {
               </button>
             </div>
           ) : (
-            <span className="online-badge">● Trực Tuyến</span>
+            <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+              <span className="online-badge">● Trực Tuyến</span>
+              <button className="toggle-edit-btn" onClick={() => setIsEditMode(true)}>
+                Chỉnh Sửa
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -151,6 +172,9 @@ export default function Room1_BaoCap() {
             mascotState={mascotState}
             chatOpen={chatOpen}
             onMascotClick={() => setChatOpen(true)}
+            entryDirection={entryDirection}
+            exitDirection={exitDirection}
+            onExitComplete={() => onRoomChange(exitingToRoom)}
           />
         </Suspense>
       </Canvas>
@@ -198,6 +222,17 @@ export default function Room1_BaoCap() {
         setSelectedObjectId={setSelectedObjectId}
         {...chatHook}
       />
+
+      {/* Nút mũi tên chuyển sang Phòng 2 */}
+      {!isEditMode && !selectedObjectId && (
+        <button 
+          className="room-nav-arrow right ui-interactive" 
+          onClick={() => handleRoomSwitch('room2')}
+          title="Sang Phòng 2: Đại hội VI"
+        >
+          <ChevronRight size={24} />
+        </button>
+      )}
     </div>
   );
 }

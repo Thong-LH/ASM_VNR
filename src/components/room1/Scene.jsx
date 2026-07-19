@@ -19,7 +19,10 @@ function Scene({
   setShowUI,
   mascotState,
   chatOpen,
-  onMascotClick
+  onMascotClick,
+  entryDirection,
+  exitDirection,
+  onExitComplete
 }) {
   const { camera } = useThree();
   const lookAtTarget = useRef(new Vector3(0, 0, 0));
@@ -146,6 +149,9 @@ function Scene({
         onClose={() => setSelectedObjectId(null)}
         onMascotClick={onMascotClick}
         isEditMode={isEditMode}
+        entryDirection={entryDirection}
+        exitDirection={exitDirection}
+        onExitComplete={onExitComplete}
       />
     </group>
   );

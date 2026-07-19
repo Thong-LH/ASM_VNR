@@ -1323,3 +1323,338 @@ body,
     transform: translateX(0);
   }
 }
+
+/* Hiệu ứng chuyển cảnh giữa các phòng */
+.room-container {
+  opacity: 1;
+}
+
+.room-container.room-exit-active {
+  pointer-events: none;
+}
+
+/* Nút mũi tên chuyển phòng ở hai bên mép màn hình */
+.room-nav-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(13, 15, 18, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.7);
+  width: 45px;
+  height: 75px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 15;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(8px);
+}
+
+.room-nav-arrow:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.room-nav-arrow.left {
+  left: 0;
+  border-radius: 0 12px 12px 0;
+}
+
+.room-nav-arrow.right {
+  right: 0;
+  border-radius: 12px 0 0 12px;
+}
+
+.tv-video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgb(0, 0, 0);
+  /* Đen hoàn toàn */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  overflow: hidden;
+  /* Ngăn hiện thanh cuộn khi TV container tràn chiều cao */
+  opacity: 1;
+  transition: opacity 0.8s ease-in-out; /* Fade-out mượt mà khi thoát ra */
+  animation: tvFadeIn 0.4s ease-out forwards;
+}
+
+.tv-video-overlay.tv-exit-active {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+.tv-video-container {
+  position: relative;
+  width: 280vh;
+  /* Tăng mạnh chiều dài ngang và ép không co lại */
+  height: 230vh;
+  /* Giữ nguyên chiều cao ổn định */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.8));
+  flex-shrink: 0;
+  /* KHÓA CO GIÃN: Ngăn chặn Flexbox tự động bóp nhỏ kích thước vượt khung */
+}
+
+.tv-frame-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  object-fit: fill;
+  /* Khớp tỉ lệ vuông của container */
+  filter: brightness(0.60) contrast(1.05); /* Làm tối xám nhẹ khung gỗ và các chi tiết xung quanh đầu phát */
+}
+
+.tv-screen-video-box {
+  position: absolute;
+  top: 29.6%;
+  /* Tọa độ y chuẩn từ ảnh gốc */
+  left: 18.8%;
+  /* Tọa độ x chuẩn từ ảnh gốc */
+  width: 50.6%;
+  /* Chiều rộng màn hình chuẩn */
+  height: 38.0%;
+  /* Chiều cao màn hình chuẩn */
+  background: #000;
+  z-index: 15;
+  /* Đặt trên khung TV (z-index 10) để đè hoàn toàn lên màu xanh lá */
+  border-radius: 12px;
+  /* Bo góc nhẹ khớp với khung tivi cổ */
+  overflow: hidden;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.9);
+}
+
+.tv-actual-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0; /* Mặc định ẩn video (nền đen của box sẽ hiện lên) */
+  transition: opacity 0.8s ease-in-out; /* Tạo hiệu ứng Fade In / Fade Out mượt mà */
+}
+
+.tv-actual-video.playing {
+  opacity: 1; /* Hiện video lên khi đang phát */
+}
+
+.tv-close-btn {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: rgba(13, 15, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.2rem;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  opacity: 0; /* Ẩn nút X đi theo mặc định */
+  transition: opacity 0.3s ease, background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hiện nút X khi đưa chuột lại gần vị trí góc trên bên phải */
+.tv-close-btn:hover {
+  opacity: 1; /* Fade-in nút X khi di chuột vào đúng khu vực nút */
+  background: linear-gradient(135deg, #ff7b00 0%, #ff5100 100%);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 4px 20px rgba(255, 81, 0, 0.4);
+}
+
+@keyframes tvFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* TV Zoom Background Overlay (Mờ nền đen khi camera phóng cận cảnh) */
+.tv-zoom-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  z-index: 150;
+  /* Nằm trên Canvas 3D (z-index: 1) và dưới TV Video Overlay (z-index: 2000) */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1); /* Đồng bộ 0.8s fade-out */
+}
+
+.tv-zoom-bg-overlay.dimmed {
+  opacity: 1;
+}
+
+/* TV Hotspot Buttons (Vùng nhạy tương tác đè lên nút vật lý) */
+.tv-hotspot-btn {
+  position: absolute;
+  cursor: pointer;
+  z-index: 25; /* Nằm trên ảnh TV (z-index 10) và khung video (z-index 15) */
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+/* Hiệu ứng phản hồi nhẹ khi di chuột vào nút (không ở Edit Mode) */
+.tv-hotspot-btn:not(.edit-active):hover {
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.25);
+}
+
+.tv-hotspot-btn.edit-active {
+  cursor: move;
+}
+
+/* TV Buttons Config Editor Panel (Bảng chỉnh tọa độ kéo thả) */
+.tv-buttons-editor {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: rgba(13, 15, 18, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 1.25rem;
+  border-radius: 14px;
+  z-index: 3000; /* Nằm trên toàn bộ các lớp phủ khác */
+  width: 320px;
+  max-height: 85vh;
+  overflow-y: auto;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.tv-buttons-editor h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.05rem;
+  color: #ff7b00;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  padding-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.editor-section {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 0.75rem;
+}
+
+.editor-section:last-of-type {
+  border-bottom: none;
+  margin-bottom: 0.5rem;
+}
+
+.editor-section-title {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #00ffcc;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.editor-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.45rem;
+  font-size: 0.8rem;
+}
+
+.editor-row label {
+  width: 55px;
+  flex-shrink: 0;
+  color: #ddd;
+}
+
+.editor-row input[type="range"] {
+  flex-grow: 1;
+  margin: 0 10px;
+  cursor: pointer;
+  accent-color: #ff5100;
+}
+
+.editor-row span {
+  width: 45px;
+  text-align: right;
+  flex-shrink: 0;
+  color: #ffbb00;
+  font-weight: bold;
+}
+
+.editor-copy-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #ff7b00 0%, #ff5100 100%);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 0.65rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 15px rgba(255, 81, 0, 0.35);
+  transition: all 0.2s ease;
+}
+
+.editor-copy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(255, 81, 0, 0.5);
+}
+
+/* TV Edit Toggle Button (Nút bật/tắt căn chỉnh tọa độ tivi) */
+.tv-edit-toggle-btn {
+  position: absolute;
+  top: 30px;
+  right: 95px; /* Đặt bên trái nút close (close ở right 30px, width 50px) */
+  background: rgba(13, 15, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0 1.25rem;
+  height: 50px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 30;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.tv-edit-toggle-btn:hover {
+  background: #00ffcc;
+  color: #0d0f12;
+  border-color: #00ffcc;
+  transform: scale(1.05);
+  box-shadow: 0 4px 20px rgba(0, 255, 204, 0.35);
+}

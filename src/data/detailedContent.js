@@ -1,30 +1,30 @@
 // Nội dung thuyết minh chi tiết cho từng hiện vật trưng bày
 const detailedContent = {
   obj_sogao: {
-    title: "Khủng hoảng Lương thực",
+    title: "Cơ chế Quan liêu & Bao cấp",
     subtitle: "Phao cứu sinh thời bao cấp",
     paragraphs: [
-      "Trong giai đoạn trước Đổi Mới (1976-1985), nền kinh tế Việt Nam rơi vào tình trạng khủng hoảng lương thực vô cùng trầm trọng. Do cơ chế kế hoạch hóa tập trung và ngăn sông cấm chợ, việc phân phối lương thực hoàn toàn phụ thuộc vào Nhà nước.",
-      "Cuốn sổ gạo được xem là vật bất ly thân, 'phao cứu sinh' quyết định sự sống còn của mỗi gia đình. Để mua được vài kilôgam gạo mốc hay ngô hột, người dân phải xếp hàng từ tờ mờ sáng, đôi khi phải đặt gạch, nón lá để giữ chỗ suốt nhiều tiếng đồng hồ.",
-      "Cơ chế tem phiếu này chỉ thực sự bị xóa bỏ khi Đại hội VI (12/1986) quyết định thực hiện đường lối Đổi Mới toàn diện, chuyển đổi sang nền kinh tế hàng hóa nhiều thành phần vận hành theo cơ chế thị trường."
+      "Sau năm 1975, Việt Nam thực hiện mô hình kinh tế kế hoạch hóa tập trung quan liêu bao cấp trên phạm vi cả nước. Quá trình vận hành này đã làm triệt tiêu động lực sản xuất, khiến năng suất lao động thấp kém.",
+      "Lương thực, thực phẩm và hàng tiêu dùng thiết yếu thường xuyên khan hiếm. Việc phân phối chủ yếu thông qua chế độ tem phiếu và sổ gạo, khiến đời sống nhân dân vô cùng thiếu thốn, mức sống giảm sút.",
+      "Sự bế tắc này đặt ra yêu cầu cấp bách phải đổi mới cơ chế quản lý để thoát khỏi khủng hoảng, dẫn đến bước ngoặt lịch sử tại Đại hội VI (12/1986)."
     ]
   },
   obj_bangdien: {
-    title: "Lạm Phát Phi Mã 774%",
+    title: "Siêu lạm phát 774%",
     subtitle: "Đỉnh điểm khủng hoảng Giá - Lương - Tiền 1986",
     paragraphs: [
-      "Sau cuộc cải cách Giá - Lương - Tiền đầy bất ổn cuối năm 1985, nền tài chính quốc gia lâm vào tình trạng mất kiểm soát. Đồng tiền mất giá phi mã từng giờ, kéo theo làn sóng đầu cơ tích trữ hàng hóa nghiêm trọng.",
-      "Đỉnh điểm vào năm 1986, chỉ số lạm phát của Việt Nam chạm mốc lịch sử kinh hoàng: 774%. Đây là con số phản ánh rõ nét nhất sự kiệt quệ của mô hình kinh tế cũ, khi giá cả tăng vọt khiến đời sống của người lao động và cán bộ công nhân viên chức vô cùng khốn đốn.",
-      "Cơn sốt lạm phát 774% này chính là sức ép to lớn buộc Đảng và Nhà nước phải dũng cảm nhìn thẳng vào sự thật, đưa ra những quyết sách Đổi Mới mang tính bước ngoặt lịch sử tại Đại hội VI."
+      "Việc mắc bệnh chủ quan, duy ý chí, nóng vội và duy trì quá lâu cơ chế bao cấp đã đẩy nền kinh tế vào khủng hoảng sâu sắc.",
+      "Đặc biệt vào năm 1986, Việt Nam đối mặt với tình trạng siêu lạm phát chạm mức 774%. Đồng tiền mất giá nghiêm trọng, tiền lương thực tế giảm mạnh.",
+      "Khủng hoảng giáng đòn nặng nề vào đời sống của nhân dân, nhất là lực lượng công nhân, viên chức và lực lượng vũ trang — minh chứng rõ rệt cho sự thất bại của cơ chế cũ."
     ]
   },
   obj_loa: {
-    title: "Sức ép Cải tổ & Đổi mới",
+    title: "Tiền đề của Đổi mới",
     subtitle: "Luồng gió thời đại và khát vọng chuyển mình",
     paragraphs: [
-      "Chiếc loa phường thời bao cấp không chỉ là công cụ tuyên truyền các chính sách phân phối tem phiếu, mà còn là phương tiện kết nối người dân với những tin tức chuyển động quốc tế.",
-      "Vào những năm cuối thập niên 1980, sức ép đổi mới đè nặng từ cả bên trong lẫn bên ngoài. Trong nước, đời sống nhân dân kiệt quệ dẫn tới nhiều vi phạm pháp luật và làn sóng vượt biên. Trên thế giới, cuộc cách mạng khoa học - kỹ thuật đang bùng nổ mạnh mẽ, đồng thời Liên Xô và các nước XHCN bắt đầu tiến hành công cuộc cải tổ (Perestroika).",
-      "Trước bối cảnh sống còn đó, khát vọng đổi mới đã trở thành ý chí chung của toàn dân tộc, mở đường cho những cải cách sâu rộng đưa đất nước hội nhập quốc tế và phát triển phồn vinh."
+      "Khủng hoảng kéo theo các vấn đề xã hội phức tạp như đầu cơ, buôn lậu và tình trạng vượt biên gia tăng. Cùng với áp lực từ sự kiện Liên Xô cải tổ và việc bị bao vây cấm vận, Đảng và nhiều địa phương đã từng bước tìm tòi lối thoát.",
+      "Những bước đột phá như Chỉ thị 100 (Khoán 100) năm 1981, hay thí điểm bù giá vào lương tại Long An đã khơi thông phần nào sản xuất.",
+      "Dù chưa hoàn thiện, đây chính là những cơ sở thực tiễn và lý luận quan trọng tạo tiền đề cho Đại hội VI — bước ngoặt lịch sử của công cuộc Đổi Mới toàn diện."
     ]
   }
 };

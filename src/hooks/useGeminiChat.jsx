@@ -1,10 +1,25 @@
 import { useState, useEffect, useRef } from 'react';
 
 // Custom hook quản lý toàn bộ logic AI Chat với Gemini
-export function useGeminiChat({ contextText, setSelectedObjectId, setChatOpen }) {
+// artifactLinks: [{ label: 'Tên hiện vật', id: 'obj_xxx' }]
+export function useGeminiChat({ contextText, setSelectedObjectId, setChatOpen, welcomeMessage, artifactLinks }) {
+  const defaultWelcome = welcomeMessage || 'Xin chào! Tôi là hướng dẫn viên tại đây. Giai đoạn 1986–1996 là một trong những chương lịch sử đặc biệt nhất của Việt Nam — từ khủng hoảng kinh tế trầm trọng đến bước ngoặt Đổi Mới. Bạn muốn tìm hiểu điều gì?';
+  const defaultArtifactLinks = artifactLinks || [
+    { label: 'Sổ Gạo', id: 'obj_sogao' },
+    { label: 'Đồng hồ áp suất', id: 'obj_bangdien' },
+    { label: 'Loa Phường', id: 'obj_loa' },
+  ];
+  const artifactLinksText = defaultArtifactLinks.map(a => `[${a.label}](${a.id})`).join('\n');
   const [messages, setMessages] = useState([
-    { role: 'assistant', text: 'Xin chào! Tôi là hướng dẫn viên tại đây. Giai đoạn 1986–1996 là một trong những chương lịch sử đặc biệt nhất của Việt Nam — từ khủng hoảng kinh tế trầm trọng đến bước ngoặt Đổi Mới. Bạn muốn tìm hiểu điều gì?' }
+    { role: 'assistant', text: defaultWelcome }
   ]);
+
+  // Reset tin nhắn khi chuyển phòng (nhận welcomeMessage mới)
+  useEffect(() => {
+    setMessages([
+      { role: 'assistant', text: defaultWelcome }
+    ]);
+  }, [defaultWelcome]);
   const [userInput, setUserInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [customApiKey, setCustomApiKey] = useState(localStorage.getItem('gemini_api_key') || '');
@@ -128,9 +143,7 @@ Tuân thủ các quy tắc sau:
 1. Đi thẳng vào trả lời, không chào hỏi lại ở đầu. Ngắn gọn, súc tích, dưới 180 từ.
 2. Chỉ in đậm tối đa 3-4 từ khóa lịch sử quan trọng nhất bằng cú pháp **từ_khóa**. Không lạm dụng.
 3. Nếu câu trả lời liên quan đến hiện vật đang trưng bày, thêm liên kết RIÊNG ở dòng CUỐI, KHÔNG nhúng vào giữa câu văn:
-[Sổ Gạo](obj_sogao)
-[Đồng hồ áp suất](obj_bangdien)
-[Loa Phường](obj_loa)
+${artifactLinksText}
 4. Nếu câu hỏi nằm ngoài phạm vi lịch sử Việt Nam giai đoạn 1986–nay, hãy lịch sự từ chối.
 
 Kiến thức nền của bạn:

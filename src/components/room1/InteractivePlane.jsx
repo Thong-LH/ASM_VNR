@@ -42,10 +42,16 @@ function InteractivePlane({
     return tex;
   }, [baseTexture, isFlipped]);
 
-  // Hiệu ứng Hover dạng Lerp (Mượt mà như lò xo - Spring)
-  useFrame(() => {
+  const shaderRef = useRef();
+
+  // Hiệu ứng Hover dạng Lerp (Mượt mà như lò xo - Spring) & cập nhật shader uTime
+  useFrame((state) => {
+    if (shaderRef.current) {
+      shaderRef.current.uniforms.uTime.value = state.clock.getElapsedTime();
+    }
+
     if (meshRef.current && !isEditMode) {
-      const targetScaleFactor = (hovered && !chatOpen) ? 1.05 : 1.0;
+      const targetScaleFactor = (hovered && !chatOpen && !isSelected) ? 1.05 : 1.0;
       const targetScale = new Vector3(
         absScale[0] * targetScaleFactor,
         absScale[1] * targetScaleFactor,
@@ -55,15 +61,22 @@ function InteractivePlane({
     }
   });
 
+  // Reset hover state when selected
+  useEffect(() => {
+    if (isSelected) {
+      setHovered(false);
+    }
+  }, [isSelected]);
+
   // Thay đổi cursor chuột khi hover
   useEffect(() => {
-    if (hovered && !isEditMode && !chatOpen) {
+    if (hovered && !isEditMode && !chatOpen && !isSelected) {
       document.body.style.cursor = 'pointer';
     } else {
       document.body.style.cursor = 'auto';
     }
     return () => { document.body.style.cursor = 'auto'; };
-  }, [hovered, isEditMode, chatOpen]);
+  }, [hovered, isEditMode, chatOpen, isSelected]);
 
   // Xử lý sự kiện kéo thả & co giãn trong Edit Mode
   const handleObjectChange = () => {
@@ -100,11 +113,11 @@ function InteractivePlane({
           scale={absScale}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isEditMode && !chatOpen) onSelect(id);
+            if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
           }}
           onPointerOver={(e) => {
             e.stopPropagation();
-            if (!isEditMode && !chatOpen) setHovered(true);
+            if (!isEditMode && !chatOpen && !isSelected) setHovered(true);
           }}
           onPointerOut={(e) => {
             e.stopPropagation();
@@ -112,7 +125,49 @@ function InteractivePlane({
           }}
         >
           <planeGeometry />
-          <meshBasicMaterial map={texture} transparent toneMapped={false} />
+          {id === 'obj_tv' ? (
+            <shaderMaterial
+              ref={shaderRef}
+              transparent
+              toneMapped={false}
+              uniforms={{
+                uMap: { value: texture },
+                uTime: { value: 0 }
+              }}
+              vertexShader={`
+                varying vec2 vUv;
+                void main() {
+                  vUv = uv;
+                  gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+              `}
+              fragmentShader={`
+                uniform sampler2D uMap;
+                uniform float uTime;
+                varying vec2 vUv;
+                
+                float random(vec2 co) {
+                  return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+                }
+                
+                void main() {
+                  vec4 texColor = texture2D(uMap, vUv);
+                  // Tăng ngưỡng lọc lên 0.12 và yêu cầu kênh Green phải đủ sáng (> 0.15)
+                  // Giúp tránh tuyệt đối việc ăn vào các vùng phản quang màu xám ở mép phải TV
+                  float greenness = texColor.g - max(texColor.r, texColor.b);
+                  if (greenness > 0.12 && texColor.g > 0.15) {
+                    // Tạo nhiễu hạt TV (Static noise) đen trắng động
+                    float grain = random(vUv * fract(sin(uTime)));
+                    gl_FragColor = vec4(vec3(grain), texColor.a);
+                  } else {
+                    gl_FragColor = texColor;
+                  }
+                }
+              `}
+            />
+          ) : (
+            <meshBasicMaterial map={texture} transparent toneMapped={false} />
+          )}
         </mesh>
       </Suspense>
 
