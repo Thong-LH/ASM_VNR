@@ -36,6 +36,7 @@ function Mascot({
   const [actionState, setActionState] = useState(entryDirection ? 'idle' : mascotState);
   const isTransitioningRef = useRef(false);
   const hasEnteredRef = useRef(false);
+  const flyingInRef = useRef(!!entryDirection); // true khi đang trong quá trình bay vào phòng mới (bao gồm cả delay)
 
   // Vị trí bến đậu mặc định ở góc phải dưới
   const defaultPos = useMemo(() => new Vector3(2.2, -0.5, 0.6), []);
@@ -51,15 +52,6 @@ function Mascot({
     if (!selectedObjectId || !roomData) return null;
     return roomData.interactive_objects.find(obj => obj.id === selectedObjectId);
   }, [selectedObjectId, roomData]);
-
-  useEffect(() => {
-    console.log("=== Mascot mounted ===", {
-      room_id: roomData?.room_id,
-      entryDirection,
-      initialPos: initialPos.current,
-      mascotState
-    });
-  }, []);
 
   // Cấu hình Lật hình (Flip) dựa theo Hướng nhìn mong muốn ('RIGHT' hay 'LEFT')
   // - idle & welcome: Mặc định gốc nhìn TRÁI -> Muốn nhìn PHẢI: flip = true (RIGHT); Muốn nhìn TRÁI: flip = false (LEFT).
@@ -104,7 +96,7 @@ function Mascot({
 
   // Đồng bộ trạng thái đứng yên khi không di chuyển
   useEffect(() => {
-    if (isTransitioningRef.current || (!hasEnteredRef.current && entryDirection)) return;
+    if (isTransitioningRef.current || flyingInRef.current) return;
     if (mascotState === 'welcome') {
       setActionState('welcome');
     } else if (mascotState === 'thinking') {
@@ -182,6 +174,7 @@ function Mascot({
     if (!hasEnteredRef.current && entryDirection) {
       delay = 0.5;
       hasEnteredRef.current = true;
+      flyingInRef.current = true; // Đánh dấu đang bay vào, chặn sync effect ghi đè actionState
     }
 
     const startX = spriteRef.current ? spriteRef.current.position.x : defaultPos.x;
@@ -220,6 +213,7 @@ function Mascot({
         ease: 'power2.out',
         onComplete: () => {
           isTransitioningRef.current = false;
+          flyingInRef.current = false; // Bay xong, cho phép sync effect hoạt động lại
           setLookDirection(landingDirection);
           setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
         }
