@@ -26,6 +26,7 @@ import SidePanel from './components/room1/SidePanel';
 import ChatBox from './components/room1/ChatBox';
 import EditModeToolbar from './components/room1/EditModeToolbar';
 import Intro from './components/Intro';
+import QuizGame from './components/quiz/QuizGame';
 
 const ROOM_TOURS = {
   room1: [
@@ -163,6 +164,7 @@ export default function App() {
   const [chatOpen, setChatOpen] = useState(false);
   const [mascotState, setMascotState] = useState('idle');
   const [contextText, setContextText] = useState('');
+  const [quizOpen, setQuizOpen] = useState(false);
 
 
   const [userZoomOffset, setUserZoomOffset] = useState(0); // Độ lệch Zoom tự do do người dùng cuộn chuột hoặc bấm nút Zoom
@@ -437,7 +439,7 @@ export default function App() {
             )}
           </div>
 
-          <button className="nav-btn" onClick={() => setModalContent({ title: "Trò Chơi Tương Tác", desc: "Trò chơi giải đố lịch sử đang được xây dựng." })}>
+          <button className="nav-btn" onClick={() => { setDropdownOpen(false); setQuizOpen(true); }}>
             Trò Chơi
           </button>
           <button className="nav-btn" onClick={() => setModalContent({ title: "Phụ Lục AI & Hướng Dẫn Viên Ảo", desc: "Hệ thống AI hướng dẫn viên đang được phát triển." })}>
@@ -865,6 +867,8 @@ export default function App() {
           )}
         </div>
       )}
+
+      {quizOpen && <QuizGame onClose={() => setQuizOpen(false)} />}
 
       {/* Màn hình Intro mở đầu (Che phủ Canvas chạy ngầm bên dưới) */}
       {!isEntered && (
