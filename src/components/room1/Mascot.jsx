@@ -40,10 +40,26 @@ function Mascot({
   // Vị trí bến đậu mặc định ở góc phải dưới
   const defaultPos = useMemo(() => new Vector3(2.2, -0.5, 0.6), []);
 
+  // Vị trí bắt đầu nếu bay từ phòng khác vào (ENTRY ROOM) - Dùng useRef để cố định lúc mount tránh giật khung hình khi re-render
+  const initialPos = useRef([
+    entryDirection ? (entryDirection === 'forward' ? -6.0 : 6.0) : defaultPos.x,
+    entryDirection ? 1.0 : defaultPos.y,
+    defaultPos.z
+  ]);
+
   const activeObject = useMemo(() => {
     if (!selectedObjectId || !roomData) return null;
     return roomData.interactive_objects.find(obj => obj.id === selectedObjectId);
   }, [selectedObjectId, roomData]);
+
+  useEffect(() => {
+    console.log("=== Mascot mounted ===", {
+      room_id: roomData?.room_id,
+      entryDirection,
+      initialPos: initialPos.current,
+      mascotState
+    });
+  }, []);
 
   // Cấu hình Lật hình (Flip) dựa theo Hướng nhìn mong muốn ('RIGHT' hay 'LEFT')
   // - idle & welcome: Mặc định gốc nhìn TRÁI -> Muốn nhìn PHẢI: flip = true (RIGHT); Muốn nhìn TRÁI: flip = false (LEFT).
@@ -255,12 +271,7 @@ function Mascot({
     }
   }, [exitDirection, onExitComplete]);
 
-  // Vị trí bắt đầu nếu bay từ phòng khác vào (ENTRY ROOM) - Dùng useRef để cố định lúc mount tránh giật khung hình khi re-render
-  const initialPos = useRef([
-    entryDirection ? (entryDirection === 'forward' ? -6.0 : 6.0) : defaultPos.x,
-    entryDirection ? 1.0 : defaultPos.y,
-    defaultPos.z
-  ]);
+
 
   const stateStartTimeRef = useRef(null);
 
