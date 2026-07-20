@@ -164,6 +164,13 @@ export default function App() {
   const [mascotState, setMascotState] = useState('idle');
   const [contextText, setContextText] = useState('');
 
+  // Reset mascot về trạng thái idle khi đóng chatbox
+  useEffect(() => {
+    if (!chatOpen) {
+      setMascotState('idle');
+    }
+  }, [chatOpen]);
+
   const [userZoomOffset, setUserZoomOffset] = useState(0); // Độ lệch Zoom tự do do người dùng cuộn chuột hoặc bấm nút Zoom
   const [userPanOffset, setUserPanOffset] = useState({ x: 0, y: 0 }); // Độ lệch Kéo thả chuột (Mouse Drag Pan)
 
@@ -174,20 +181,20 @@ export default function App() {
     setUserPanOffset({ x: 0, y: 0 });
   }, [selectedObjectId, roadmapStage]);
 
-  // Hỗ trợ cuộn bánh xe chuột (Mouse Wheel) để Zoom tự do khi xem hiện vật / Roadmap
+  // Hỗ trợ cuộn bánh xe chuột (Mouse Wheel) để Zoom tự do khi xem hiện vật / Roadmap - CHỈ áp dụng ở phòng 4
   useEffect(() => {
-    if (!selectedObjectId || isEditMode) return;
+    if (!selectedObjectId || isEditMode || currentRoom !== 'room4') return;
     const handleWheel = (e) => {
       const delta = e.deltaY > 0 ? 0.08 : -0.08;
       setUserZoomOffset(prev => Math.min(0.8, Math.max(-0.5, prev + delta)));
     };
     window.addEventListener('wheel', handleWheel, { passive: true });
     return () => window.removeEventListener('wheel', handleWheel);
-  }, [selectedObjectId, isEditMode]);
+  }, [selectedObjectId, isEditMode, currentRoom]);
 
-  // Hỗ trợ kéo thả chuột (Mouse Drag Pan) để di chuyển tự do trong không gian
+  // Hỗ trợ kéo thả chuột (Mouse Drag Pan) - CHỈ kích hoạt tại Phòng 4 (Roadmap)
   useEffect(() => {
-    if (!selectedObjectId || isEditMode) return;
+    if (!selectedObjectId || isEditMode || currentRoom !== 'room4') return;
 
     let isDragging = false;
     let startX = 0;
@@ -207,12 +214,11 @@ export default function App() {
 
     const handlePointerMove = (e) => {
       if (!isDragging) return;
-      const deltaX = (e.clientX - startX) * 0.0012; // Giảm độ nhạy kéo thả
+      const deltaX = (e.clientX - startX) * 0.0012;
       const deltaY = (e.clientY - startY) * 0.0012;
       startX = e.clientX;
       startY = e.clientY;
 
-      // Giới hạn kéo thả strictly xung quanh chặng hiện tại (x: [-0.4, 0.4], y: [-0.3, 0.3])
       setUserPanOffset(prev => ({
         x: Math.min(0.4, Math.max(-0.4, prev.x - deltaX)),
         y: Math.min(0.3, Math.max(-0.3, prev.y + deltaY))
@@ -235,7 +241,7 @@ export default function App() {
       window.removeEventListener('pointermove', handlePointerMove);
       window.removeEventListener('pointerup', handlePointerUp);
     };
-  }, [selectedObjectId, isEditMode]);
+  }, [selectedObjectId, isEditMode, currentRoom]);
 
   // Trích xuất cấu hình phòng hiện tại
   const config = ROOMS_CONFIG[currentRoom];
@@ -251,12 +257,14 @@ export default function App() {
   const entryDirection = getTransitionDirection(prevRoom, currentRoom);
   const exitDirection = exitingToRoom ? getTransitionDirection(currentRoom, exitingToRoom) : null;
 
-  const handleRoomSwitch = (targetRoom, isTourSwitch = false) => {
+  const handleRoomSwitch = (targetRoom) => {
     if (targetRoom === currentRoom) return;
     setDropdownOpen(false);
     setSelectedObjectId(null); // Đóng hiện vật cũ
     setRoadmapStage(0);
-    if (!isTourSwitch) setTourActive(false); // Reset trạng thái tour nếu đổi phòng thủ công
+    setTourActive(false); // Reset tour mode khi đổi phòng - Mỗi phòng là 1 tour độc lập
+    setTourIndex(0);
+    setPendingTourObject(null);
     setExitingToRoom(targetRoom);
   };
 
@@ -264,17 +272,12 @@ export default function App() {
     setPrevRoom(currentRoom);
     setCurrentRoom(exitingToRoom);
     setExitingToRoom(null);
-
-    if (pendingTourObject) {
-      const targetId = pendingTourObject;
-      setPendingTourObject(null);
-
-      if (tourActive) {
-        setTimeout(() => {
-          setSelectedObjectId(targetId);
-        }, 1800);
-      }
-    }
+    setMascotState('welcome');
+    
+    // Xóa prevRoom sau 2s (khi mascot đã bay vào xong) để entryDirection không bị stale
+    setTimeout(() => {
+      setPrevRoom(null);
+    }, 2000);
   };
 
   // Khởi tạo Gemini Chat Hook
@@ -289,6 +292,7 @@ export default function App() {
   // Chuyển câu hỏi ngữ cảnh về cho Chatbox khi chọn hiện vật
   useEffect(() => {
     if (selectedObjectId) {
+      setMascotState('idle'); // Trả mascotState về idle sau tương tác đầu tiên để kết thúc sẽ về idle
       const currentObj = activeRoomData.interactive_objects.find(o => o.id === selectedObjectId);
       if (currentObj) {
         const fullContent = config.detailedContent[selectedObjectId];
@@ -314,6 +318,20 @@ export default function App() {
     }, 400);
   };
 
+  // Xử lý khi video TV kết thúc: nếu đang trong tour thì nhảy sang vật thể kế tiếp, nếu không thì đóng TV
+  const handleTVVideoEnded = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+    }
+    setIsVideoPlaying(false);
+    if (tourActive) {
+      handleNext();
+    } else {
+      closeTV();
+    }
+  };
+
   // --- HỆ THỐNG DẪN TOUR TỰ ĐỘNG ---
   const startTour = () => {
     setDropdownOpen(false);
@@ -333,6 +351,11 @@ export default function App() {
   };
 
   const handleNext = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
+
     const tourList = ROOM_TOURS[currentRoom];
     if (!tourList) return;
 
@@ -341,23 +364,27 @@ export default function App() {
       setTourIndex(nextIndex);
       setSelectedObjectId(tourList[nextIndex]);
     } else {
+      // 1. Kết thúc tour phòng hiện tại & bay về trạng thái idle tổng quan của phòng
+      exitTour();
+
+      // 2. Tự động chuyển sang phòng tiếp theo (nếu chưa phải phòng cuối) sau 1.2s
       const roomOrder = ['room1', 'room2', 'room3', 'room4'];
       const currentRoomIdx = roomOrder.indexOf(currentRoom);
       if (currentRoomIdx < roomOrder.length - 1) {
         const nextRoom = roomOrder[currentRoomIdx + 1];
-        const nextRoomTour = ROOM_TOURS[nextRoom];
-        if (nextRoomTour && nextRoomTour.length > 0) {
-          setTourIndex(0);
-          setPendingTourObject(nextRoomTour[0]);
-          handleRoomSwitch(nextRoom, true);
-        }
-      } else {
-        exitTour();
+        setTimeout(() => {
+          handleRoomSwitch(nextRoom);
+        }, 1200);
       }
     }
   };
 
   const handlePrev = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+      setIsVideoPlaying(false);
+    }
+
     const tourList = ROOM_TOURS[currentRoom];
     if (!tourList) return;
 
@@ -507,7 +534,7 @@ export default function App() {
 
       <SidePanel
         selectedObjectId={selectedObjectId}
-        showUI={showUI && selectedObjectId !== 'obj_tv' && selectedObjectId !== 'obj_hanhtrinh' && selectedObjectId !== 'obj_roadmap'}
+        showUI={showUI && selectedObjectId !== 'obj_tv' && selectedObjectId !== 'obj_roadmap'}
         isEditMode={isEditMode}
         roomData={activeRoomData}
         onClose={() => { setSelectedObjectId(null); setRoadmapStage(0); }}
@@ -537,9 +564,10 @@ export default function App() {
               <video
                 ref={videoRef}
                 src="/assets/video_lichsu.mp4"
+                preload="auto"
                 controls
                 playsInline
-                onEnded={closeTV}
+                onEnded={handleTVVideoEnded}
                 className={`tv-actual-video ${isVideoPlaying ? 'playing' : ''}`}
               />
             </div>
@@ -604,9 +632,8 @@ export default function App() {
               <button
                 className="tv-tour-btn next"
                 onClick={handleNext}
-                disabled={tourIndex === (ROOM_TOURS[currentRoom]?.length || 0) - 1 && currentRoom === 'room4'}
               >
-                {tourIndex === (ROOM_TOURS[currentRoom]?.length || 0) - 1 && currentRoom !== 'room4' ? "Sang phòng kế ▶" : "Tiếp tục ▶"}
+                {tourIndex === (ROOM_TOURS[currentRoom]?.length || 0) - 1 && currentRoom !== 'room4' ? "Sang phòng kế ▶" : "Hoàn thành ✕"}
               </button>
               <button className="tv-tour-btn exit" onClick={exitTour}>
                 Thoát Tour
@@ -844,7 +871,10 @@ export default function App() {
 
       {/* Màn hình Intro mở đầu (Che phủ Canvas chạy ngầm bên dưới) */}
       {!isEntered && (
-        <Intro onEnterMuseum={() => setIsEntered(true)} />
+        <Intro onEnterMuseum={() => {
+          setIsEntered(true);
+          setMascotState('welcome');
+        }} />
       )}
     </div>
   );

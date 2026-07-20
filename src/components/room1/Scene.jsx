@@ -122,6 +122,7 @@ function Scene({
           scale={obj.scale}
           content={obj.content}
           isSelected={selectedObjectId === obj.id}
+          anySelected={!!selectedObjectId}
           onSelect={setSelectedObjectId}
           isEditMode={isEditMode}
           transformMode={transformMode}
@@ -133,6 +134,7 @@ function Scene({
       ))}
 
       <Mascot
+        key={roomData.background.url}
         selectedObjectId={selectedObjectId}
         roomData={roomData}
         mascotState={mascotState}

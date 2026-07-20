@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 
 // Custom hook quản lý toàn bộ logic AI Chat với Gemini
 // artifactLinks: [{ label: 'Tên hiện vật', id: 'obj_xxx' }]
-export function useGeminiChat({ contextText, setSelectedObjectId, setChatOpen, welcomeMessage, artifactLinks }) {
+export function useGeminiChat({ contextText, setSelectedObjectId, setChatOpen, welcomeMessage, artifactLinks, onMascotStateChange }) {
   const defaultWelcome = welcomeMessage || 'Xin chào! Tôi là hướng dẫn viên tại đây. Giai đoạn 1986–1996 là một trong những chương lịch sử đặc biệt nhất của Việt Nam — từ khủng hoảng kinh tế trầm trọng đến bước ngoặt Đổi Mới. Bạn muốn tìm hiểu điều gì?';
   const defaultArtifactLinks = artifactLinks || [
     { label: 'Sổ Gạo', id: 'obj_sogao' },
@@ -125,6 +125,7 @@ export function useGeminiChat({ contextText, setSelectedObjectId, setChatOpen, w
     setMessages(prev => [...prev, { role: 'user', text: userQuery }]);
     setUserInput('');
     setLoading(true);
+    if (onMascotStateChange) onMascotStateChange('thinking');
 
     if (customApiKey) {
       try {
@@ -169,12 +170,14 @@ ${contextText}
         setMessages(prev => [...prev, { role: 'assistant', text: 'Có lỗi xảy ra khi kết nối với API Gemini. Vui lòng kiểm tra lại API Key.' }]);
       } finally {
         setLoading(false);
+        if (onMascotStateChange) onMascotStateChange('welcome');
       }
     } else {
       setTimeout(() => {
         const reply = getMockResponse(userQuery);
         setMessages(prev => [...prev, { role: 'assistant', text: reply }]);
         setLoading(false);
+        if (onMascotStateChange) onMascotStateChange('welcome');
       }, 700);
     }
   };

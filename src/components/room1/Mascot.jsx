@@ -188,37 +188,39 @@ function Mascot({
 
     gsap.killTweensOf([spriteRef.current.position, spriteRef.current.rotation]);
 
-    if (distance > 0.2) {
+    // Chỉ chạy GSAP di chuyển khi khoảng cách thực sự lớn (cần di chuyển đến hiện vật mới hoặc vừa vào phòng)
+    if (distance > 0.15) {
       isTransitioningRef.current = true;
       spriteRef.current.rotation.z = tiltAngle;
-      setLookDirection(isMovingRight ? 'RIGHT' : 'LEFT'); // Bay sang phải -> nhìn PHẢI; bay sang trái -> nhìn TRÁI
+      setLookDirection(isMovingRight ? 'RIGHT' : 'LEFT'); // Bay sang phải -> nhìn PHẦI; bay sang trái -> nhìn TRÁI
       setActionState('idle'); // Giữ dáng idle khi đang bay
+
+      gsap.to(spriteRef.current.position, {
+        x: targetX,
+        y: targetY,
+        z: targetZ,
+        duration: 1.4,
+        delay: delay,
+        ease: 'power2.out',
+        onComplete: () => {
+          isTransitioningRef.current = false;
+          setLookDirection(landingDirection);
+          setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+        }
+      });
+
+      gsap.to(spriteRef.current.rotation, {
+        z: 0,
+        duration: 1.4,
+        delay: delay,
+        ease: 'power2.out'
+      });
     } else {
+      // Nếu đã ở rất sát rồi (hoặc do thay đổi state không liên quan vị trí), chỉ cần đổi trạng thái hoạt ảnh, tránh chạy lại GSAP gây khựng/nháy hình
       isTransitioningRef.current = false;
       setLookDirection(landingDirection);
       setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
     }
-
-    gsap.to(spriteRef.current.position, {
-      x: targetX,
-      y: targetY,
-      z: targetZ,
-      duration: 1.4,
-      delay: delay,
-      ease: 'power2.out',
-      onComplete: () => {
-        isTransitioningRef.current = false;
-        setLookDirection(landingDirection);
-        setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
-      }
-    });
-
-    gsap.to(spriteRef.current.rotation, {
-      z: 0,
-      duration: 1.4,
-      delay: delay,
-      ease: 'power2.out'
-    });
   }, [selectedObjectId, roomData, exitDirection, entryDirection, mascotState, defaultPos, roadmapStage]);
 
   // --- PHẦN 2: XỬ LÝ BAY THOÁT KHỎI MÀN HÌNH KHI ĐỔI PHÒNG (EXIT ROOM) ---
@@ -253,9 +255,12 @@ function Mascot({
     }
   }, [exitDirection, onExitComplete]);
 
-  // Vị trí bắt đầu nếu bay từ phòng khác vào (ENTRY ROOM)
-  const startX = entryDirection ? (entryDirection === 'forward' ? -6.0 : 6.0) : defaultPos.x;
-  const startY = entryDirection ? 1.0 : defaultPos.y;
+  // Vị trí bắt đầu nếu bay từ phòng khác vào (ENTRY ROOM) - Dùng useRef để cố định lúc mount tránh giật khung hình khi re-render
+  const initialPos = useRef([
+    entryDirection ? (entryDirection === 'forward' ? -6.0 : 6.0) : defaultPos.x,
+    entryDirection ? 1.0 : defaultPos.y,
+    defaultPos.z
+  ]);
 
   const stateStartTimeRef = useRef(null);
 
@@ -316,7 +321,7 @@ function Mascot({
     <group renderOrder={999}>
       <group
         ref={spriteRef}
-        position={[startX, startY, defaultPos.z]}
+        position={initialPos.current}
         renderOrder={999}
         onClick={(e) => {
           e.stopPropagation();

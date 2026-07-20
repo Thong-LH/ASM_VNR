@@ -16,6 +16,7 @@ function Globe3DObject({
   position,
   scale,
   isSelected,
+  anySelected,
   onSelect,
   isEditMode,
   transformMode,
@@ -47,7 +48,7 @@ function Globe3DObject({
     }
 
     if (groupRef.current && !isEditMode) {
-      const targetScaleFactor = (hovered && !chatOpen && !isSelected) ? 1.05 : 1.0;
+      const targetScaleFactor = (hovered && !chatOpen && !isSelected && !anySelected) ? 1.05 : 1.0;
       const targetScale = new Vector3(
         absScale[0] * targetScaleFactor,
         absScale[1] * targetScaleFactor,
@@ -59,15 +60,15 @@ function Globe3DObject({
 
   // Cursor style
   useEffect(() => {
-    if (hovered && !isEditMode && !chatOpen && !isSelected) {
+    if (hovered && !isEditMode && !chatOpen && !isSelected && !anySelected) {
       document.body.style.cursor = isDragging ? 'grabbing' : 'grab';
     } else {
       document.body.style.cursor = 'auto';
     }
     return () => { document.body.style.cursor = 'auto'; };
-  }, [hovered, isEditMode, chatOpen, isSelected, isDragging]);
+  }, [hovered, isEditMode, chatOpen, isSelected, anySelected, isDragging]);
 
-  const handlePointerDown = (e) => {
+  const handleSpherePointerDown = (e) => {
     e.stopPropagation();
     if (!isEditMode && !chatOpen) {
       setIsDragging(true);
@@ -75,12 +76,12 @@ function Globe3DObject({
     }
   };
 
-  const handlePointerUp = (e) => {
+  const handleSpherePointerUp = (e) => {
     if (e) e.stopPropagation();
     setIsDragging(false);
   };
 
-  const handlePointerMove = (e) => {
+  const handleSpherePointerMove = (e) => {
     if (isDragging && sphereRef.current) {
       e.stopPropagation();
       const deltaX = e.clientX - prevMouseRef.current.x;
@@ -119,11 +120,11 @@ function Globe3DObject({
         scale={absScale}
         onClick={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
+          if (!isEditMode && !chatOpen && !anySelected) onSelect(id);
         }}
         onPointerOver={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) setHovered(true);
+          if (!isEditMode && !chatOpen && (!anySelected || isSelected)) setHovered(true);
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
@@ -132,9 +133,6 @@ function Globe3DObject({
             setIsDragging(false);
           }
         }}
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        onPointerMove={handlePointerMove}
       >
         {/* Đèn chiếu sáng riêng biệt làm nổi bật chi tiết bản đồ quả địa cầu */}
         <ambientLight intensity={1.5} />
@@ -147,8 +145,16 @@ function Globe3DObject({
         </mesh>
 
         {/* 2. Quả cầu 3D xoay thật nằm ở trung tâm vòng khung nghiêng */}
+        {/* onPointerDown/Move/Up chỉ đặt trên sphere để chỉ drag khi kéo đúng vào quả cầu */}
         <group position={GLOBE_CONFIG.offset} rotation={[0, 0, GLOBE_CONFIG.tiltAngle]}>
-          <mesh ref={sphereRef} scale={[GLOBE_CONFIG.scale, GLOBE_CONFIG.scale, GLOBE_CONFIG.scale]}>
+          <mesh
+            ref={sphereRef}
+            scale={[GLOBE_CONFIG.scale, GLOBE_CONFIG.scale, GLOBE_CONFIG.scale]}
+            onPointerDown={handleSpherePointerDown}
+            onPointerUp={handleSpherePointerUp}
+            onPointerMove={handleSpherePointerMove}
+            onPointerOut={(e) => { e.stopPropagation(); setIsDragging(false); }}
+          >
             <sphereGeometry args={[1, 64, 64]} />
             <meshStandardMaterial
               map={mapTexture}
@@ -178,6 +184,7 @@ function HanhTrinhObject({
   position,
   scale,
   isSelected,
+  anySelected,
   onSelect,
   isEditMode,
   transformMode,
@@ -246,11 +253,11 @@ function HanhTrinhObject({
         scale={[absScale[0], 0.045, 1]} // Khởi tạo dẹt trên bàn
         onClick={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
+          if (!isEditMode && !chatOpen && !anySelected) onSelect(id);
         }}
         onPointerOver={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) setHovered(true);
+          if (!isEditMode && !chatOpen && (!anySelected || isSelected)) setHovered(true);
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
@@ -385,6 +392,7 @@ function InteractivePlane({
   position,
   scale,
   isSelected,
+  anySelected,
   onSelect,
   isEditMode,
   transformMode,
@@ -398,6 +406,7 @@ function InteractivePlane({
         position={position}
         scale={scale}
         isSelected={isSelected}
+        anySelected={anySelected}
         onSelect={onSelect}
         isEditMode={isEditMode}
         transformMode={transformMode}
@@ -414,6 +423,7 @@ function InteractivePlane({
         position={position}
         scale={scale}
         isSelected={isSelected}
+        anySelected={anySelected}
         onSelect={onSelect}
         isEditMode={isEditMode}
         transformMode={transformMode}
@@ -536,11 +546,11 @@ function InteractivePlane({
           scale={absScale}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
+            if (!isEditMode && !chatOpen && !anySelected) onSelect(id);
           }}
           onPointerOver={(e) => {
             e.stopPropagation();
-            if (!isEditMode && !chatOpen && !isSelected) setHovered(true);
+            if (!isEditMode && !chatOpen && (!anySelected || isSelected)) setHovered(true);
           }}
           onPointerOut={(e) => {
             e.stopPropagation();
@@ -569,16 +579,20 @@ function InteractivePlane({
                 uniform float uTime;
                 varying vec2 vUv;
                 
-                float random(vec2 co) {
-                  return fract(sin(dot(co.xy, vec2(12.9898, 78.233))) * 43758.5453);
+                // Hàm tạo cát nhiễu chuẩn hóa, tương thích 100% mọi trình duyệt và GPU
+                float random(vec2 uv) {
+                  return fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453123);
                 }
                 
                 void main() {
                   vec4 texColor = texture2D(uMap, vUv);
                   float greenness = texColor.g - max(texColor.r, texColor.b);
                   if (greenness > 0.12 && texColor.g > 0.15) {
-                    float grain = random(vUv * fract(sin(uTime)));
-                    gl_FragColor = vec4(vec3(grain), texColor.a);
+                    // Trộn uTime với tọa độ UV để thay đổi hạt nhiễu liên tục theo khung hình
+                    float n = random(vUv * 600.0 + vec2(sin(uTime * 8.0), cos(uTime * 5.0)));
+                    // Hạt cát nhiễu xám đặc trưng của TV cổ
+                    vec3 noiseColor = vec3(0.06 + n * 0.12);
+                    gl_FragColor = vec4(noiseColor, texColor.a);
                   } else {
                     gl_FragColor = texColor;
                   }

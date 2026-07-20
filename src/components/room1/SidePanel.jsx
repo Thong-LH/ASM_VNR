@@ -8,6 +8,44 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
 
   if (!selectedObjectId || !showUI || isEditMode || !detailedContent) return null;
 
+  // obj_hanhtrinh: Hiển thị chỉ mini-bar tour ở giữa màn hình, mờ mặc định, rõ khi hover
+  if (selectedObjectId === 'obj_hanhtrinh') {
+    return (
+      <React.Fragment>
+        <button
+          className="side-panel-close-btn ui-interactive hanhtrinh-close-btn"
+          onClick={tourActive ? onExit : onClose}
+          style={{ position: 'fixed', top: 20, right: 24, zIndex: 3000, opacity: 0.35, transition: 'opacity 0.35s ease' }}
+          onMouseEnter={e => e.currentTarget.style.opacity = 1}
+          onMouseLeave={e => e.currentTarget.style.opacity = 0.35}
+        >
+          <X size={18} />
+        </button>
+        {tourActive && (
+          <div className="museum-tour-mini-bar ui-interactive hanhtrinh-tour-bar">
+            <button
+              className="tour-mini-btn prev"
+              onClick={onPrev}
+              disabled={tourIndex === 0}
+              title="Hiện vật trước"
+            >
+              ◀ Trước
+            </button>
+            <span className="tour-mini-progress">{tourIndex + 1} / {tourLength}</span>
+            <button
+              className="tour-mini-btn next primary"
+              onClick={onNext}
+              title={tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế tiếp" : "Hoàn thành tour"}
+            >
+              {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Hoàn thành ✕"}
+            </button>
+            <button className="tour-mini-btn exit" onClick={onExit} title="Thoát Tour">✕</button>
+          </div>
+        )}
+      </React.Fragment>
+    );
+  }
+
   // Nếu hiện vật nằm ở góc bên phải, ta lật Panel thuyết minh sang trái để không bị đè lên nhau
   const isRightAlignedObj = selectedObjectId === 'obj_loa' || selectedObjectId === 'obj_radio' || selectedObjectId === 'obj_diacau';
 
@@ -166,10 +204,9 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
           <button
             className="tour-mini-btn next primary"
             onClick={onNext}
-            disabled={tourIndex === tourLength - 1 && isLastRoom}
-            title={tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế tiếp" : "Hiện vật tiếp theo"}
+            title={tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế tiếp" : "Hoàn thành tour"}
           >
-            {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Tiếp tục ▶"}
+            {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Hoàn thành ✕"}
           </button>
 
           <button
