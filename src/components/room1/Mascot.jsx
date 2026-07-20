@@ -36,7 +36,6 @@ function Mascot({
   const [actionState, setActionState] = useState(entryDirection ? 'idle' : mascotState);
   const isTransitioningRef = useRef(false);
   const hasEnteredRef = useRef(false);
-  const flyingInRef = useRef(!!entryDirection); // true khi đang trong quá trình bay vào phòng mới (bao gồm cả delay)
 
   // Vị trí bến đậu mặc định ở góc phải dưới
   const defaultPos = useMemo(() => new Vector3(2.2, -0.5, 0.6), []);
@@ -94,19 +93,6 @@ function Mascot({
     isPointingFlipped
   ]);
 
-  // Đồng bộ trạng thái đứng yên khi không di chuyển
-  useEffect(() => {
-    if (isTransitioningRef.current || flyingInRef.current) return;
-    if (mascotState === 'welcome') {
-      setActionState('welcome');
-    } else if (mascotState === 'thinking') {
-      setActionState('thinking');
-    } else if (selectedObjectId) {
-      setActionState('pointing');
-    } else {
-      setActionState(mascotState);
-    }
-  }, [mascotState, selectedObjectId, roadmapStage]);
 
   // --- PHẦN 1: XỬ LÝ BAY VÀO & KHÁM PHÁ HIỆN VẬT TRONG PHÒNG ---
   useEffect(() => {
@@ -174,7 +160,6 @@ function Mascot({
     if (!hasEnteredRef.current && entryDirection) {
       delay = 0.5;
       hasEnteredRef.current = true;
-      flyingInRef.current = true; // Đánh dấu đang bay vào, chặn sync effect ghi đè actionState
     }
 
     const startX = spriteRef.current ? spriteRef.current.position.x : defaultPos.x;
@@ -200,8 +185,9 @@ function Mascot({
     // Chỉ chạy GSAP di chuyển khi khoảng cách thực sự lớn (cần di chuyển đến hiện vật mới hoặc vừa vào phòng)
     if (distance > 0.15) {
       isTransitioningRef.current = true;
+      stateStartTimeRef.current = null;
       spriteRef.current.rotation.z = tiltAngle;
-      setLookDirection(isMovingRight ? 'RIGHT' : 'LEFT'); // Bay sang phải -> nhìn PHẦI; bay sang trái -> nhìn TRÁI
+      setLookDirection(isMovingRight ? 'RIGHT' : 'LEFT'); // Bay sang phải -> nhìn PHẢI; bay sang trái -> nhìn TRÁI
       setActionState('idle'); // Giữ dáng idle khi đang bay
 
       gsap.to(spriteRef.current.position, {
@@ -213,7 +199,6 @@ function Mascot({
         ease: 'power2.out',
         onComplete: () => {
           isTransitioningRef.current = false;
-          flyingInRef.current = false; // Bay xong, cho phép sync effect hoạt động lại
           setLookDirection(landingDirection);
           setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
         }
@@ -231,7 +216,7 @@ function Mascot({
       setLookDirection(landingDirection);
       setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
     }
-  }, [selectedObjectId, roomData, exitDirection, entryDirection, mascotState, defaultPos, roadmapStage]);
+  }, [selectedObjectId, roomData, exitDirection, entryDirection, defaultPos, roadmapStage]);
 
   // --- PHẦN 2: XỬ LÝ BAY THOÁT KHỎI MÀN HÌNH KHI ĐỔI PHÒNG (EXIT ROOM) ---
   useEffect(() => {
@@ -242,6 +227,7 @@ function Mascot({
       const tiltAngle = isExitingForward ? -0.25 : 0.25;
 
       isTransitioningRef.current = true;
+      stateStartTimeRef.current = null;
       setLookDirection(isExitingForward ? 'RIGHT' : 'LEFT'); // Forward = bay sang phải (nhìn PHẢI); Backward = bay sang trái (nhìn TRÁI)
       setActionState('idle');
 
@@ -253,6 +239,7 @@ function Mascot({
         duration: 1.2,
         ease: 'power2.in',
         onComplete: () => {
+          isTransitioningRef.current = false;
           if (onExitComplete) onExitComplete();
         }
       });
@@ -264,6 +251,20 @@ function Mascot({
       });
     }
   }, [exitDirection, onExitComplete]);
+
+  // Đồng bộ trạng thái đứng yên khi không di chuyển (chỉ chạy khi Mascot đã dừng hoàn toàn)
+  useEffect(() => {
+    if (isTransitioningRef.current) return;
+    if (selectedObjectId) {
+      if (mascotState === 'thinking') {
+        setActionState('thinking');
+      } else {
+        setActionState('pointing');
+      }
+    } else {
+      setActionState(mascotState);
+    }
+  }, [mascotState, selectedObjectId, roadmapStage]);
 
 
 
@@ -331,6 +332,9 @@ function Mascot({
         onClick={(e) => {
           e.stopPropagation();
           if (!isEditMode) {
+            stateStartTimeRef.current = null;
+            setActionState('idle');
+            setTimeout(() => setActionState('welcome'), 0);
             onMascotClick();
           }
         }}

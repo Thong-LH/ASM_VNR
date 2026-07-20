@@ -9,46 +9,62 @@ import Mascot from '../room1/Mascot';
 import { useTexture } from '@react-three/drei';
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// PRELOAD TẤT CẢ TEXTURE CỦA MỌI PHÒNG + MASCOT — Tải ngầm vào GPU cache ngay
-// khi app khởi động, loại bỏ hoàn toàn spinner "Đang tải bảo tàng..." khi chuyển phòng.
-// Mỗi lệnh preload độc lập, 1 cái fail không ảnh hưởng cái khác.
+// HÀM PRELOAD AN TOÀN — Bọc try-catch tránh crash môi trường Node.js (Vercel Build)
 // ═══════════════════════════════════════════════════════════════════════════════
+const safePreloadTexture = (url) => {
+  try {
+    if (typeof window !== 'undefined') {
+      useTexture.preload(url);
+    }
+  } catch (e) {
+    console.warn('Preload failed for:', url, e);
+  }
+};
 
-// --- Room 1: Thời Bao Cấp ---
-useTexture.preload('/assets/background1.png');
-useTexture.preload('/assets/sogao.png');
-useTexture.preload('/assets/saptien.png');
-useTexture.preload('/assets/loa.png');
+export const preloadRoomAssets = (roomId) => {
+  try {
+    if (roomId === 'room1') {
+      safePreloadTexture('/assets/background1.png');
+      safePreloadTexture('/assets/sogao.png');
+      safePreloadTexture('/assets/saptien.png');
+      safePreloadTexture('/assets/loa.png');
+    } else if (roomId === 'room2') {
+      safePreloadTexture('/assets/background2.png');
+      safePreloadTexture('/assets/vankien.png');
+      safePreloadTexture('/assets/tobao.png');
+      safePreloadTexture('/assets/sodo.png');
+      safePreloadTexture('/assets/radio.png');
+      safePreloadTexture('/assets/nghiquyet10.png');
+      safePreloadTexture('/assets/tv.png');
+    } else if (roomId === 'room3') {
+      safePreloadTexture('/assets/background3.jpeg');
+      safePreloadTexture('/assets/cuonglinh.png');
+      safePreloadTexture('/assets/bieudo.png');
+      safePreloadTexture('/assets/truc.png');
+      safePreloadTexture('/assets/diacau.png');
+      safePreloadTexture('/assets/hanhtrinh.png');
+    } else if (roomId === 'room4') {
+      safePreloadTexture('/assets/background4.jpeg');
+      safePreloadTexture('/assets/roadmap.jpg');
+    }
+  } catch (e) {
+    console.warn(`Error running preloadRoomAssets for ${roomId}:`, e);
+  }
+};
 
-// --- Room 2: Đại hội VI & Đổi mới ---
-useTexture.preload('/assets/background2.png');
-useTexture.preload('/assets/vankien.png');
-useTexture.preload('/assets/tobao.png');
-useTexture.preload('/assets/sodo.png');
-useTexture.preload('/assets/radio.png');
-useTexture.preload('/assets/nghiquyet10.png');
-useTexture.preload('/assets/tv.png');
-
-// --- Room 3: Thành tựu 1991–1995 ---
-useTexture.preload('/assets/background3.jpeg');
-useTexture.preload('/assets/cuonglinh.png');
-useTexture.preload('/assets/bieudo.png');
-useTexture.preload('/assets/truc.png');
-useTexture.preload('/assets/diacau.png');
-useTexture.preload('/assets/hanhtrinh.png');
-
-// --- Room 4: Lộ trình Đổi Mới ---
-useTexture.preload('/assets/background4.jpeg');
-useTexture.preload('/assets/roadmap.jpg');
-
-// --- Mascot Sprite Sheets ---
-useTexture.preload('/assets/mascot_idle.png');
-useTexture.preload('/assets/mascot_welcome.png');
-useTexture.preload('/assets/mascot_thinking.png');
-useTexture.preload('/assets/mascot_pointing.png');
-
-// --- Globe texture ---
-useTexture.preload('/assets/earth_map_texture.jpeg');
+// --- Preload Mascot & Room 1 ngay khi khởi chạy app ---
+try {
+  safePreloadTexture('/assets/mascot_idle.png');
+  safePreloadTexture('/assets/mascot_welcome.png');
+  safePreloadTexture('/assets/mascot_thinking.png');
+  safePreloadTexture('/assets/mascot_pointing.png');
+  safePreloadTexture('/assets/earth_map_texture.jpeg');
+  
+  // Load trước Room 1 để vào app mượt luôn
+  preloadRoomAssets('room1');
+} catch (e) {
+  console.warn('Initial preload failed:', e);
+}
 
 // Scene Room 2 — camera tự động zoom dựa trên zoomConfig prop
 function Scene({

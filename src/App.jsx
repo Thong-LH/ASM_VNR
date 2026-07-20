@@ -19,7 +19,7 @@ import detailedContent4 from './data/detailedContent_room4';
 import { useGeminiChat } from './hooks/useGeminiChat';
 
 // Shared R3F Scene
-import Scene from './components/room2/Scene';
+import Scene, { preloadRoomAssets } from './components/room2/Scene';
 
 // Shared HTML components
 import SidePanel from './components/room1/SidePanel';
@@ -259,6 +259,10 @@ export default function App() {
 
   const handleRoomSwitch = (targetRoom) => {
     if (targetRoom === currentRoom) return;
+    
+    // Tải trước tài nguyên của phòng đích ngay khi mascot bắt đầu bay
+    preloadRoomAssets(targetRoom);
+    
     setDropdownOpen(false);
     setSelectedObjectId(null); // Đóng hiện vật cũ
     setRoadmapStage(0);
