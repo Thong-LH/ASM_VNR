@@ -58,7 +58,7 @@ export default function TheoryPracticeCompare() {
       {/* ==================== CỘT PHẢI: BƯỚC NGOẶT LOGIC ==================== */}
       <div className="tp-editorial-col right-col">
         <div className="tp-col-title-wrap">
-          <h4 className="tp-col-main-title">ĐẢO NGƯỢC TRẬT TỰ ƯU TIÊN</h4>
+          <h4 className="tp-col-main-title">VẬN DỤNG SÁNG TẠO</h4>
         </div>
 
         <div className="tp-logic-flow-wrap">

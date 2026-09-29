@@ -210,7 +210,7 @@ const detailedContent = {
         ]
       },
       rightColumn: {
-        title: "Sơ đồ luồng: Đảo ngược trật tự ưu tiên",
+        title: "Sơ đồ luồng: Vận dụng sáng tạo",
         flows: [
           {
             id: "western",
