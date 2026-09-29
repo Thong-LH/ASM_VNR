@@ -298,14 +298,20 @@ function Mascot({
     }
     if (textureWelcome) {
       if (actionState === 'welcome') {
-        const { startFrame, endFrame } = WELCOME_LOOP_CONFIG;
-        const loopLength = Math.max(1, endFrame - startFrame + 1);
         let idx = 0;
-        if (currentFrame < startFrame) {
-          idx = currentFrame; // Lần đầu giơ tay lên từ 0 -> startFrame
+        if (isRoadmapFlipped) {
+          // CHỈ KHI LẬT ĐẾN BẢNG "XIN CẢM ƠN": Vẫy tay liên tục trên cao
+          const { startFrame, endFrame } = WELCOME_LOOP_CONFIG;
+          const loopLength = Math.max(1, endFrame - startFrame + 1);
+          if (currentFrame < startFrame) {
+            idx = currentFrame; // Lần đầu giơ tay lên từ 0 -> startFrame
+          } else {
+            // Sau đó chỉ lặp lại trong khoảng tay giơ cao vẫy liên tục
+            idx = startFrame + ((currentFrame - startFrame) % loopLength);
+          }
         } else {
-          // Sau đó chỉ lặp lại trong khoảng tay giơ cao vẫy liên tục
-          idx = startFrame + ((currentFrame - startFrame) % loopLength);
+          // CÁC TÌNH HUỐNG XIN CHÀO BÌNH THƯỜNG (Click mở guide / Chatbot): Chạy 1 lượt bình thường
+          idx = Math.min(currentFrame, 12);
         }
         textureWelcome.offset.x = isWelcomeFlipped ? (idx + 1) / 13 : idx / 13;
       } else {
