@@ -21,7 +21,7 @@ function BackgroundPlane({ url, selectedObjectId }) {
   // Hiệu ứng Spotlight: làm tối nền khi có vật phẩm được chọn
   useEffect(() => {
     if (bgRef.current && bgRef.current.material) {
-      const targetColor = selectedObjectId ? 0.25 : 1.0;
+      const targetColor = selectedObjectId ? 0.08 : 1.0;
       
       gsap.to(bgRef.current.material.color, {
         r: targetColor,

@@ -1,12 +1,35 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { X, Maximize2, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import ThreeStageTimeline from '../common/ThreeStageTimeline';
+import TheoryPracticeCompare from '../common/TheoryPracticeCompare';
+import GlobeCoreLessons from '../common/GlobeCoreLessons';
 
 // Panel thuyết minh hiện vật bên phải/trái màn hình (được tái sử dụng cho tất cả các phòng)
 function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, detailedContent, tourActive, tourIndex, tourLength, isLastRoom, onNext, onPrev, onExit, roadmapStage = 0, setRoadmapStage }) {
   const [lightboxImage, setLightboxImage] = React.useState(null);
+  const [treeTab, setTreeTab] = React.useState(1);
+  const [activeSubTab, setActiveSubTab] = React.useState(1);
+  const [tab2ImgIdx, setTab2ImgIdx] = React.useState(0);
 
-  if (!selectedObjectId || !showUI || isEditMode || !detailedContent) return null;
+  const bookSec1Ref = React.useRef(null);
+  const bookSec2Ref = React.useRef(null);
+
+  const scrollToBookSec1 = () => {
+    bookSec1Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+  const scrollToBookSec2 = () => {
+    bookSec2Ref.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  // Reset tab về 1 khi đổi hiện vật
+  React.useEffect(() => {
+    setTreeTab(1);
+    setActiveSubTab(1);
+    setTab2ImgIdx(0);
+  }, [selectedObjectId]);
+
+  if (!selectedObjectId || !showUI || isEditMode || !detailedContent || selectedObjectId === 'obj_roadmap') return null;
 
   // obj_hanhtrinh: Hiển thị chỉ mini-bar tour ở giữa màn hình, mờ mặc định, rõ khi hover
   if (selectedObjectId === 'obj_hanhtrinh') {
@@ -37,7 +60,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
               onClick={onNext}
               title={tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế tiếp" : "Hoàn thành tour"}
             >
-              {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Hoàn thành ✕"}
+              {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Tiếp >"}
             </button>
             <button className="tour-mini-btn exit" onClick={onExit} title="Thoát Tour">✕</button>
           </div>
@@ -47,36 +70,404 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
   }
 
   // Nếu hiện vật nằm ở góc bên phải, ta lật Panel thuyết minh sang trái để không bị đè lên nhau
-  const isRightAlignedObj = selectedObjectId === 'obj_loa' || selectedObjectId === 'obj_radio' || selectedObjectId === 'obj_diacau';
+  const isRightAlignedObj = selectedObjectId === 'obj_loa' || selectedObjectId === 'obj_radio' || selectedObjectId === 'obj_diacau' || selectedObjectId === 'obj_book';
+
+  // Lấy dữ liệu cho obj_tree (3 tabs)
+  const isTree = selectedObjectId === 'obj_tree' && detailedContent['obj_tree']?.tabs;
+  const treeData = isTree ? detailedContent['obj_tree'] : null;
+  const currentTreeTab = isTree ? (treeData.tabs.find(t => t.id === treeTab) || treeData.tabs[0]) : null;
+  const activeSub = (isTree && treeTab === 2)
+    ? (currentTreeTab?.subTabs?.find(s => s.id === activeSubTab) || currentTreeTab?.subTabs?.[0])
+    : null;
+
+  // Lấy dữ liệu cho obj_book
+  const isBook = selectedObjectId === 'obj_book';
+  const bookData = isBook ? detailedContent['obj_book'] : null;
+
+  // Lấy dữ liệu cho obj_diacau (Quả địa cầu - 3 bài học cốt lõi & tư liệu)
+  const isDiaCau = selectedObjectId === 'obj_diacau';
+  const diaCauData = isDiaCau ? detailedContent['obj_diacau'] : null;
 
   // Lấy dữ liệu theo chặng nếu là obj_roadmap
   const roadmapData = detailedContent['obj_roadmap'];
+  const totalStages = roadmapData?.stages?.length || 2;
   const currentStageData = (selectedObjectId === 'obj_roadmap' && roadmapStage > 0)
     ? roadmapData?.stages?.find(s => s.id === roadmapStage)
     : null;
 
-  const title = currentStageData?.title || detailedContent[selectedObjectId]?.title || roomData.interactive_objects.find(o => o.id === selectedObjectId)?.content.title;
-  const subtitle = currentStageData?.subtitle || detailedContent[selectedObjectId]?.subtitle || "";
+  const title = isTree
+    ? (currentTreeTab?.title || treeData.title)
+    : (currentStageData?.title || detailedContent[selectedObjectId]?.title || roomData.interactive_objects.find(o => o.id === selectedObjectId)?.content.title);
+
+  const subtitle = isTree
+    ? (currentTreeTab?.subtitle || treeData.subtitle)
+    : (currentStageData?.subtitle || detailedContent[selectedObjectId]?.subtitle || "");
+
   const paragraphs = currentStageData?.paragraphs || detailedContent[selectedObjectId]?.paragraphs || [];
 
   return (
     <React.Fragment>
-      <div className={`museum-side-panel ui-interactive ${isRightAlignedObj ? 'left-aligned' : ''} ${tourActive ? 'tour-active-adjust' : ''}`}>
+      <div className={`museum-side-panel ui-interactive ${isTree || isBook || isDiaCau ? 'tree-panel-mode' : ''} ${isDiaCau ? 'diacau-panel-mode' : ''} ${isRightAlignedObj ? 'left-aligned' : ''} ${tourActive ? 'tour-active-adjust' : ''}`}>
         <button className="side-panel-close-btn" onClick={tourActive ? onExit : onClose}>
           <X size={18} />
         </button>
 
         <div className="side-panel-content">
-          <span className="panel-badge">
-            {selectedObjectId === 'obj_roadmap' && roadmapStage > 0 ? `Lộ Trình Z-Pattern — ${roadmapStage}/4` : "Hiện Vật Trưng Bày"}
-          </span>
+          {/* Hàng trên cùng: Badge bên trái, Tab bên phải (cho Chậu Măng Tre) */}
+          <div className="sidepanel-header-top-row">
+            <span className="panel-badge">
+              {isTree
+                ? `HIỆN VẬT: ${treeData.artifactName || 'CHẬU MĂNG TRE'}`
+                : isBook
+                ? `HIỆN VẬT: ${bookData?.artifactName || 'QUYỂN SÁCH LÝ LUẬN'}`
+                : isDiaCau
+                ? `HIỆN VẬT: ${diaCauData?.artifactName || 'QUẢ ĐỊA CẦU HỘI NHẬP'}`
+                : (selectedObjectId === 'obj_roadmap' && roadmapStage > 0 ? `Lộ Trình — Phần ${roadmapStage}/${totalStages}` : 'Hiện Vật Trưng Bày')}
+            </span>
+
+            {/* Thanh chuyển đổi 3 Tab cho Chậu Tre */}
+            {isTree && (
+              <div className="sidepanel-tabs-bar" role="tablist">
+                {treeData.tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    className={`sidepanel-tab-btn ${treeTab === tab.id ? 'active' : ''}`}
+                    onClick={() => setTreeTab(tab.id)}
+                    title={tab.title}
+                  >
+                    <span>Tab {tab.id}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <h2 className="panel-title">{title}</h2>
           <h4 className="panel-subtitle">{subtitle}</h4>
 
           <div className="panel-divider"></div>
 
           <div className="panel-body">
-            {paragraphs.map((p, idx) => {
+            {isTree ? (
+              treeTab === 1 ? (
+                <div className="tree-tab1-layout">
+                  <div className="tree-panel-grid">
+                    {/* Cột trái: Sơ đồ tương tác */}
+                    <div className="tree-panel-left">
+                      <div
+                        className="tree-panel-img-wrap"
+                        onClick={() => setLightboxImage({ url: currentTreeTab.diagram.image, note: currentTreeTab.diagram.caption })}
+                        title="Click phóng to xem chi tiết"
+                      >
+                        <img
+                          src={currentTreeTab.diagram.image}
+                          alt={currentTreeTab.diagram.caption}
+                          className="tree-panel-img"
+                        />
+                        <div className="tree-panel-zoom-icon-btn" title="Phóng to" style={{ position: 'absolute', bottom: 10, right: 10 }}>
+                          <Maximize2 size={16} />
+                        </div>
+                      </div>
+                      <div className="tree-panel-caption">
+                        {currentTreeTab.diagram.caption}
+                      </div>
+                    </div>
+
+                    {/* Cột phải: Ảnh tư liệu */}
+                    <div className="tree-panel-right">
+                      <div
+                        className="tree-panel-img-wrap archive"
+                        onClick={() => setLightboxImage({ url: currentTreeTab.archive.image, note: currentTreeTab.archive.caption })}
+                        title="Click phóng to ảnh"
+                      >
+                        <img
+                          src={currentTreeTab.archive.image}
+                          alt={currentTreeTab.archive.caption}
+                          className="tree-panel-img archive"
+                        />
+                        <div className="tree-panel-zoom-icon-btn" title="Phóng to" style={{ position: 'absolute', bottom: 10, right: 10 }}>
+                          <Maximize2 size={16} />
+                        </div>
+                      </div>
+                      <div className="tree-panel-caption">
+                        {currentTreeTab.archive.caption}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Trích dẫn lịch sử Bác Hồ full-width lấp đầy toàn bộ không gian bên dưới */}
+                  {currentTreeTab.quote && (
+                    <blockquote className="tree-panel-quote">
+                      <div className="tree-quote-big-mark">“</div>
+                      <p className="tree-quote-content">"{currentTreeTab.quote.text}"</p>
+                      <footer className="tree-quote-author">— {currentTreeTab.quote.author}</footer>
+                    </blockquote>
+                  )}
+                </div>
+            ) : treeTab === 2 ? (
+              <div className="tab2-container">
+                {/* Thanh Sub-navigation 3 Căn Cứ */}
+                <div className="tab2-subnav-bar">
+                  {currentTreeTab.subTabs?.map((sub) => (
+                    <button
+                      key={sub.id}
+                      className={`tab2-subnav-btn ${activeSubTab === sub.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveSubTab(sub.id);
+                        setTab2ImgIdx(0);
+                      }}
+                    >
+                      <span className="tab2-subnav-title">{sub.navLabel}</span>
+                    </button>
+                  ))}
+                </div>
+
+                {/* Nội dung chi tiết của Căn cứ đang chọn */}
+                {activeSub && (
+                  <div className="tab2-content-flow">
+                    {/* Header căn cứ: Title + Slogan */}
+                    <div className="tab2-flow-header">
+                      <h3 className="tab2-flow-title">{activeSub.title}</h3>
+                      {activeSub.slogan && (
+                        <div className="tab2-flow-slogan">"{activeSub.slogan}"</div>
+                      )}
+                    </div>
+
+                    {/* SUB-TAB 1: MÂU THUẪN DÂN TỘC */}
+                    {activeSub.id === 1 && (
+                      <div className="tab2-sub1-layout">
+                        {/* Hàng 3 ảnh tư liệu đặt ngang bằng nhau trải rộng 100% */}
+                        <div className="tab2-gallery-strip">
+                          {activeSub.images?.map((img, i) => (
+                            <div
+                              key={i}
+                              className="tab2-strip-item"
+                              onClick={() => setLightboxImage(img)}
+                              title="Click phóng to ảnh"
+                            >
+                              <div className="tab2-strip-img-wrap">
+                                <img src={img.url} alt={img.caption} className="tab2-strip-img" />
+                                <div className="tree-panel-zoom-icon-btn">
+                                  <Maximize2 size={15} />
+                                </div>
+                              </div>
+                              <div className="tab2-strip-caption">{img.caption}</div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* 2 Khung trích dẫn lịch sử đặt song song ở dưới */}
+                        {activeSub.quotes && (
+                          <div className="tab2-quotes-row">
+                            {activeSub.quotes.map((q, qIdx) => (
+                              <div key={qIdx} className="tab2-quote-card">
+                                <span className="tab2-quote-badge">{q.source}</span>
+                                <p className="tab2-quote-text">"{q.text}"</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 2: TƯƠNG QUAN LỰC LƯỢNG */}
+                    {activeSub.id === 2 && (
+                      <div className="tab2-sub2-layout">
+                        {/* Cột trái: Infographic riêng */}
+                        <div className="tab2-sub2-left">
+                          {activeSub.images?.[0] && (
+                            <div
+                              className="tab2-strip-item infor-item"
+                              onClick={() => setLightboxImage(activeSub.images[0])}
+                              title="Click phóng to infographic"
+                            >
+                              <div className="tab2-sub2-infor-wrap">
+                                <img
+                                  src={activeSub.images[0].url}
+                                  alt={activeSub.images[0].caption}
+                                  className="tab2-sub2-infor-img"
+                                />
+                                <div className="tree-panel-zoom-icon-btn">
+                                  <Maximize2 size={16} />
+                                </div>
+                              </div>
+                              <div className="tab2-strip-caption">{activeSub.images[0].caption}</div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Cột phải: 2 hình ở trên dưới nhau */}
+                        <div className="tab2-sub2-right">
+                          {activeSub.images?.slice(1).map((img, i) => (
+                            <div
+                              key={i}
+                              className="tab2-strip-item"
+                              onClick={() => setLightboxImage(img)}
+                              title="Click phóng to ảnh"
+                            >
+                              <div className="tab2-sub2-stacked-wrap">
+                                <img
+                                  src={img.url}
+                                  alt={img.caption}
+                                  className={`tab2-sub2-stacked-img ${i === 1 ? 'pos-xe-goong' : 'pos-mo-than'}`}
+                                />
+                                <div className="tree-panel-zoom-icon-btn">
+                                  <Maximize2 size={15} />
+                                </div>
+                              </div>
+                              <div className="tab2-strip-caption">{img.caption}</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* SUB-TAB 3: TRUYỀN THỐNG DÂN TỘC */}
+                    {activeSub.id === 3 && (
+                      <div className="tab2-sub3-layout">
+                        {/* Khung trích dẫn vàng Bác Hồ full-width */}
+                        {activeSub.highlightQuote && (
+                          <div className="tab2-heritage-quote-banner">
+                            <div className="tab2-quote-big-mark">“</div>
+                            <p className="tab2-quote-core-text">
+                              {activeSub.highlightQuote.text.split('\n').map((line, lIdx) => (
+                                <React.Fragment key={lIdx}>
+                                  {line}
+                                  {lIdx < activeSub.highlightQuote.text.split('\n').length - 1 && <br />}
+                                </React.Fragment>
+                              ))}
+                            </p>
+                            <div className="tab2-quote-core-author">— {activeSub.highlightQuote.author}</div>
+                          </div>
+                        )}
+
+                        {/* Hàng 2 ảnh tư liệu: Hội nghị Diên Hồng & Bác Hồ với nông dân */}
+                        {activeSub.images && activeSub.images.length > 0 && (
+                          <div className="tab2-gallery-strip dual">
+                            {activeSub.images.map((img, i) => (
+                              <div
+                                key={i}
+                                className="tab2-strip-item"
+                                onClick={() => setLightboxImage(img)}
+                                title="Click phóng to ảnh"
+                              >
+                                <div className="tab2-strip-img-wrap">
+                                  <img
+                                    src={img.url}
+                                    alt={img.caption}
+                                    className={`tab2-strip-img ${i === 1 ? 'pos-bac-ho' : 'pos-dien-hong'}`}
+                                  />
+                                  <div className="tree-panel-zoom-icon-btn">
+                                    <Maximize2 size={15} />
+                                  </div>
+                                </div>
+                                <div className="tab2-strip-caption">{img.caption}</div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            ) : treeTab === 3 ? (
+              <div className="tab3-grid-layout">
+                {/* CỘT TRÁI (44%): LÝ LUẬN & SƠ ĐỒ NGUYÊN TẮC (RENDER DẠNG ẢNH + ZOOM LIGHTBOX) */}
+                <div className="tab3-col-left">
+                  <div className="tab3-theory-header">
+                    <h3 className="tab3-theory-title">{currentTreeTab.principle?.title || 'Phương châm "Cầu đồng tồn dị"'}</h3>
+                  </div>
+
+                  {/* Sơ đồ nguyên tắc được render dạng ảnh bảo tàng, có nút phóng to và click mở lightbox zoom */}
+                  <div
+                    className="tab3-diagram-card"
+                    onClick={() => setLightboxImage(currentTreeTab.diagramImage || { url: '/assets/so_do_cau_dong_ton_di.png', caption: 'Sơ đồ nguyên tắc: Phương châm "Cầu đồng tồn dị"' })}
+                    title="Click phóng to sơ đồ toàn màn hình"
+                  >
+                    <div className="tab3-diagram-img-wrap">
+                      <img
+                        src={currentTreeTab.diagramImage?.url || '/assets/so_do_cau_dong_ton_di.png'}
+                        alt={currentTreeTab.diagramImage?.caption || 'Sơ đồ Cầu đồng tồn dị'}
+                        className="tab3-diagram-img"
+                      />
+                      <div className="tree-panel-zoom-icon-btn">
+                        <Maximize2 size={16} />
+                      </div>
+                    </div>
+                    <div className="tab3-diagram-caption">
+                      {currentTreeTab.diagramImage?.caption || 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'}
+                    </div>
+                  </div>
+
+                  {/* BOX TRÍCH DẪN BÁC HỒ: Font Serif nghiêng, viền trái vàng đồng */}
+                  <blockquote className="tab3-quote-card">
+                    <p className="tab3-quote-text">
+                      "{currentTreeTab.principle?.quote?.text || 'Ai có tài, có đức, có sức, có lòng phụng sự Tổ quốc và phục vụ nhân dân thì ta đoàn kết với họ.'}"
+                    </p>
+                    <footer className="tab3-quote-author">
+                      — {currentTreeTab.principle?.quote?.author || 'Chủ tịch Hồ Chí Minh'}
+                    </footer>
+                  </blockquote>
+                </div>
+
+                {/* CỘT PHẢI (56%): MINH CHỨNG THỰC TIỄN - ĐỦ 4 THẺ HIỆN VẬT DẠNG GRID 2x2 LẤP ĐẦY KHÔNG GIAN */}
+                <div className="tab3-col-right">
+                  <div className="tab3-proofs-grid">
+                    {currentTreeTab.proofImages?.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="tab3-photo-item"
+                        onClick={() => setLightboxImage(item)}
+                        title="Click phóng to ảnh"
+                      >
+                        <div className="tab3-photo-frame">
+                          <img
+                            src={item.url}
+                            alt={item.caption}
+                            className={`tab3-photo-img proof-img-${idx + 1}`}
+                          />
+                          <div className="tree-panel-zoom-icon-btn">
+                            <Maximize2 size={14} />
+                          </div>
+                        </div>
+                        <div className="tab3-photo-caption">
+                          {item.caption}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="tree-panel-placeholder">
+                <p className="tree-placeholder-text">Nội dung của tab này đang được cập nhật...</p>
+                <button className="sidepanel-tab-btn" onClick={() => setTreeTab(1)}>Quay lại Tab 1</button>
+              </div>
+            )
+          ) : isBook ? (
+            <div className="book-scroll-sections-container">
+              {/* SECTION 1: TIẾN TRÌNH 3 GIAI ĐOẠN LÝ LUẬN */}
+              <section ref={bookSec1Ref} className="book-scroll-section stage-timeline-section">
+                <div className="book-timeline-container">
+                  <ThreeStageTimeline
+                    onPhotoClick={(item) => setLightboxImage({ url: item.url, note: item.title || item.note || item.caption })}
+                  />
+                </div>
+              </section>
+
+              {/* SECTION 2: BỐ CỤC 2 CỘT THỰC TIỄN & BƯỚC NGOẶT LOGIC */}
+              <section ref={bookSec2Ref} className="book-scroll-section compare-section">
+                <TheoryPracticeCompare data={detailedContent['obj_book']?.practiceSection} />
+              </section>
+            </div>
+          ) : isDiaCau ? (
+            <GlobeCoreLessons
+              data={diaCauData}
+              onPhotoClick={(item) => setLightboxImage({ url: item.url, note: item.note || item.title || item.caption })}
+            />
+          ) : (
+            paragraphs.map((p, idx) => {
               const activeDetail = detailedContent[selectedObjectId];
               let paragraphImages = [];
 
@@ -100,7 +491,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
               return (
                 <React.Fragment key={idx}>
                   <p className="panel-paragraph">{p}</p>
-                  
+
                   {paragraphImages.map((imgItem, imgIdx) => (
                     <div
                       key={imgIdx}
@@ -114,7 +505,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                         cursor: 'pointer',
                         boxShadow: '0 4px 15px rgba(0,0,0,0.4)',
                         transition: 'transform 0.2s, border-color 0.2s',
-                        background: 'rgba(12, 16, 25, 0.7)'
+                        background: '#ffffff'
                       }}
                       onClick={() => setLightboxImage(imgItem)}
                       title="Click để phóng to xem chi tiết"
@@ -145,37 +536,37 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                   ))}
                 </React.Fragment>
               );
-            })}
+            }))}
 
-            {/* Nút kích hoạt / chuyển chặng Z-Pattern cho Roadmap */}
-            {selectedObjectId === 'obj_roadmap' && setRoadmapStage && (
+            {/* Nút kích hoạt / chuyển phần cho Roadmap */}
+            {selectedObjectId === 'obj_roadmap' && setRoadmapStage && totalStages > 0 && (
               <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
                 {roadmapStage === 0 && (
                   <button
                     onClick={() => setRoadmapStage(1)}
                     style={{
-                      background: 'linear-gradient(135deg, #00ffcc 0%, #00b386 100%)',
-                      color: '#0a192f',
+                      background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                      color: '#ffffff',
                       border: 'none',
-                      padding: '10px 20px',
+                      padding: '10px 22px',
                       borderRadius: '8px',
                       fontWeight: 'bold',
                       fontSize: '0.95rem',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 15px rgba(0, 255, 204, 0.3)',
+                      boxShadow: '0 4px 15px rgba(234, 88, 12, 0.35)',
                       transition: 'transform 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    ▶ Bắt đầu Chuyến tham quan Z-Pattern
+                    ▶ Bắt đầu Khám phá (Phần 1)
                   </button>
                 )}
-                {roadmapStage > 0 && roadmapStage < 4 && (
+                {roadmapStage > 0 && roadmapStage < totalStages && (
                   <button
                     onClick={() => setRoadmapStage(roadmapStage + 1)}
                     style={{
-                      background: 'linear-gradient(135deg, #ff7b00 0%, #ff4500 100%)',
+                      background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
                       color: 'white',
                       border: 'none',
                       padding: '10px 20px',
@@ -183,18 +574,16 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                       fontWeight: 'bold',
                       fontSize: '0.9rem',
                       cursor: 'pointer',
-                      boxShadow: '0 4px 15px rgba(255, 123, 0, 0.3)',
+                      boxShadow: '0 4px 15px rgba(234, 88, 12, 0.35)',
                       transition: 'transform 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    {roadmapStage === 1 && "▶ Sang Chặng 2: Đại hội VI"}
-                    {roadmapStage === 2 && "▶ Sang Chặng 3: Bứt phá Khoán 10"}
-                    {roadmapStage === 3 && "▶ Sang Chặng 4: Thành tựu & Hội nhập"}
+                    {`▶ Sang Phần ${roadmapStage + 1}: ${roadmapData?.stages?.[roadmapStage]?.title || ''}`}
                   </button>
                 )}
-                {roadmapStage === 4 && (
+                {roadmapStage >= totalStages && (
                   <button
                     onClick={() => { setRoadmapStage(0); onClose(); }}
                     style={{
@@ -209,10 +598,10 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                       boxShadow: '0 4px 15px rgba(16, 185, 129, 0.3)',
                       transition: 'transform 0.2s'
                     }}
-                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+                    onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
                     onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                   >
-                    🎉 Hoàn thành Chuyến tham quan
+                    🎉 Hoàn thành Khám phá
                   </button>
                 )}
               </div>
@@ -391,13 +780,14 @@ function LightboxModal({ lightboxImage, onClose }) {
               border: 'none',
               color: zoomScale <= 1 ? '#64748b' : '#fdba74',
               cursor: zoomScale <= 1 ? 'not-allowed' : 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: 'bold',
-              padding: '4px 8px'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '6px'
             }}
             title="Thu nhỏ (- / Cuộn chuột xuống)"
           >
-            🔍-
+            <ZoomOut size={16} />
           </button>
 
           <span style={{ fontSize: '0.85rem', color: '#ffffff', fontWeight: 'bold', minWidth: '45px', textAlign: 'center' }}>
@@ -412,13 +802,14 @@ function LightboxModal({ lightboxImage, onClose }) {
               border: 'none',
               color: zoomScale >= 4 ? '#64748b' : '#fdba74',
               cursor: zoomScale >= 4 ? 'not-allowed' : 'pointer',
-              fontSize: '0.9rem',
-              fontWeight: 'bold',
-              padding: '4px 8px'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '6px'
             }}
             title="Phóng to (+ / Cuộn chuột lên / Cuộn đúp)"
           >
-            🔍+
+            <ZoomIn size={16} />
           </button>
 
           {zoomScale > 1 && (
@@ -429,19 +820,22 @@ function LightboxModal({ lightboxImage, onClose }) {
                 color: '#fca5a5',
                 border: '1px solid rgba(239, 68, 68, 0.4)',
                 borderRadius: '16px',
-                padding: '2px 10px',
+                padding: '4px 10px',
                 cursor: 'pointer',
-                fontSize: '0.8rem',
-                fontWeight: 'bold',
-                transition: 'background 0.2s'
+                fontSize: '0.78rem',
+                fontWeight: '600',
+                transition: 'background 0.2s',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '5px'
               }}
               title="Đặt lại độ zoom 100%"
             >
-              🎯 Reset
+              <RotateCcw size={12} /> Đặt lại
             </button>
           )}
 
-          <div style={{ width: '1px', height: '18px', background: 'rgba(255,255,255,0.2)', margin: '0 2px' }}></div>
+          <div style={{ width: '1px', height: '18px', background: 'rgba(255,255,255,0.2)', margin: '0 4px' }}></div>
 
           <button
             onClick={onClose}
@@ -450,13 +844,14 @@ function LightboxModal({ lightboxImage, onClose }) {
               border: 'none',
               color: '#f87171',
               cursor: 'pointer',
-              fontSize: '1rem',
-              fontWeight: 'bold',
-              padding: '2px 6px'
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '4px 6px'
             }}
-            title="Đóng ảnh (✕)"
+            title="Đóng ảnh"
           >
-            ✕
+            <X size={17} />
           </button>
         </div>
 
@@ -467,7 +862,7 @@ function LightboxModal({ lightboxImage, onClose }) {
             borderRadius: '10px',
             border: '2px solid rgba(255,255,255,0.2)',
             boxShadow: '0 12px 45px rgba(0,0,0,0.9)',
-            background: '#000000',
+            background: '#0a0a0a',
             cursor: zoomScale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'zoom-in'
           }}
           onMouseDown={handleMouseDown}

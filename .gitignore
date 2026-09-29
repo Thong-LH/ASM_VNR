@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Scratch & Config
+.agents/
+scratch_generate_venn.py
+GEMINI.md

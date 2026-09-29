@@ -2,12 +2,16 @@ import React, { useState, useRef, useEffect, Suspense } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { TransformControls, useTexture } from '@react-three/drei';
 import { Vector3, RepeatWrapping } from 'three';
+import gsap from 'gsap';
 
 // 🎛️ BẢNG ĐIỀU CHỈNH TƯƠNG QUAN QUẢ CẦU & KHUNG ĐẾ (Chỉnh trực tiếp các số ở đây):
 const GLOBE_CONFIG = {
   offset: [-0.02, 0.135, 0.01], // Vị trí [X, Y, Z] quả cầu so với khung (X: trái/phải, Y: lên/xuống, Z: nổi trước/sau)
-  scale: 0.25,              // Kích thước / Bán kính quả cầu 3D (ví dụ: 0.25, 0.265, 0.28...)
-  tiltAngle: -0.5          // Góc nghiêng trục (đơn vị rad, -0.41 rad tương đương 23.5 độ)
+  scale: 0.25,                  // Kích thước / Bán kính quả cầu 3D (ví dụ: 0.25, 0.265, 0.28...)
+  tiltAngle: -0.5,              // Góc nghiêng trục trái/phải (trục Z, -0.5 rad ≈ 28.6 độ)
+  pitchAngle: 0.24,              // Góc chúi xuống / ngửa lên (trục X: tăng số DƯƠNG như 0.2, 0.4 để CHÚI XUỐNG; số ÂM để NGỬA LÊN)
+  spinSpeed: 0.002,             // Hướng & tốc độ tự quay (đổi dấu âm -0.002 để đảo ngược chiều quay)
+  initialRotationY: 0.0         // Góc xoay ngang ban đầu của bề mặt quả cầu (rad)
 };
 
 // Component Quả địa cầu 3D ghép khung (Kẹp chả: Chân đế 2D + Quả cầu 3D xoay)
@@ -28,12 +32,12 @@ function Globe3DObject({
   const [hovered, setHovered] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const prevMouseRef = useRef({ x: 0, y: 0 });
-  const velocityRef = useRef({ x: 0, y: 0.003 });
+  const velocityRef = useRef({ x: 0, y: GLOBE_CONFIG.spinSpeed });
 
   const absScale = [Math.abs(scale[0]), scale[1], scale[2]];
 
   const standTexture = useTexture('/assets/truc.png');
-  const mapTexture = useTexture('/assets/earth_map_texture.jpeg');
+  const mapTexture = useTexture('/assets/earth_map_texture.jpg');
 
   // Quay tự do quanh 1 trục nghiêng độc nhất và giảm tốc quán tính khi thả chuột
   useFrame((state, delta) => {
@@ -41,8 +45,9 @@ function Globe3DObject({
       if (!isDragging) {
         sphereRef.current.rotation.y += velocityRef.current.y;
         velocityRef.current.y *= 0.95;
-        if (Math.abs(velocityRef.current.y) < 0.002) {
-          velocityRef.current.y = 0.002;
+        const minSpeed = Math.abs(GLOBE_CONFIG.spinSpeed);
+        if (Math.abs(velocityRef.current.y) < minSpeed) {
+          velocityRef.current.y = GLOBE_CONFIG.spinSpeed;
         }
       }
     }
@@ -120,7 +125,7 @@ function Globe3DObject({
         scale={absScale}
         onClick={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !anySelected) onSelect(id);
+          if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
         }}
         onPointerOver={(e) => {
           e.stopPropagation();
@@ -146,9 +151,10 @@ function Globe3DObject({
 
         {/* 2. Quả cầu 3D xoay thật nằm ở trung tâm vòng khung nghiêng */}
         {/* onPointerDown/Move/Up chỉ đặt trên sphere để chỉ drag khi kéo đúng vào quả cầu */}
-        <group position={GLOBE_CONFIG.offset} rotation={[0, 0, GLOBE_CONFIG.tiltAngle]}>
+        <group position={GLOBE_CONFIG.offset} rotation={[GLOBE_CONFIG.pitchAngle, 0, GLOBE_CONFIG.tiltAngle]}>
           <mesh
             ref={sphereRef}
+            rotation={[0, GLOBE_CONFIG.initialRotationY, 0]}
             scale={[GLOBE_CONFIG.scale, GLOBE_CONFIG.scale, GLOBE_CONFIG.scale]}
             onPointerDown={handleSpherePointerDown}
             onPointerUp={handleSpherePointerUp}
@@ -201,7 +207,7 @@ function HanhTrinhObject({
   useFrame((state) => {
     if (meshRef.current && !isEditMode) {
       const targetScaleFactor = (hovered && !chatOpen && !isSelected) ? 1.05 : 1.0;
-      
+
       const targetScale = isSelected
         ? new Vector3(1.4, 0.78, 1) // Kích thước phóng mở phẳng cực đại trong Canvas 3D
         : new Vector3(absScale[0] * targetScaleFactor, 0.045, 1); // Cuộn giấy cuộn tròn dẹt trên bàn
@@ -280,9 +286,21 @@ function HanhTrinhObject({
   );
 }
 
-// Component Bảng Roadmap lơ lửng (obj_roadmap)
+// 🎛️ BẢNG CONFIG KÍCH THƯỚC [CHIỀU RỘNG, CHIỀU CAO] 2 MẶT BẢNG 3D PHÒNG 2:
+// Bạn có thể chỉnh trực tiếp các số tại đây:
+export const ROADMAP_BOARD_CONFIG = {
+  // Mặt trước (Ảnh 1 - Sơ đồ): [Chiều rộng, Chiều cao]
+  frontSize: [2.246, 1],
+
+  // Mặt sau (Ảnh 2 - Lời cảm ơn): [Chiều rộng, Chiều cao]
+  // Tỉ lệ gốc chuẩn: 2.13 : 1 (Tăng số đầu để kéo rộng ngang, tăng số sau để kéo dài dọc)
+  backSize: [2.13, 1]
+};
+
+// Component Bảng Lật 3D 2 Mặt (obj_roadmap)
 function RoadmapFloatingObject({
   id,
+  imageUrl,
   position,
   scale,
   isSelected,
@@ -290,17 +308,34 @@ function RoadmapFloatingObject({
   isEditMode,
   transformMode,
   onUpdateTransform,
-  chatOpen
+  chatOpen,
+  isFlipped = false,
+  setIsFlipped
 }) {
-  const meshRef = useRef();
+  const groupRef = useRef();
+  const flipperRef = useRef();
   const [hovered, setHovered] = useState(false);
 
-  const texture = useTexture('/assets/roadmap.jpg');
+  const frontTexture = useTexture(imageUrl || '/assets/room2_board_front.png');
+  const backTexture = useTexture('/assets/room2_board_back_v2.jpg');
+
   const absScale = [Math.abs(scale[0]), scale[1], scale[2]];
 
-  // Hiệu ứng lơ lửng (Idle Floating) nhẹ nhàng dạng hình sin
+  // Hiệu ứng GSAP lật 3D quanh trục Y khi isFlipped thay đổi
+  useEffect(() => {
+    if (flipperRef.current) {
+      const targetY = isFlipped ? Math.PI : 0;
+      gsap.to(flipperRef.current.rotation, {
+        y: targetY,
+        duration: 0.75,
+        ease: 'power2.inOut'
+      });
+    }
+  }, [isFlipped]);
+
+  // Hiệu ứng lơ lửng (Idle Floating) nhẹ nhàng khi chưa chọn
   useFrame((state) => {
-    if (meshRef.current && !isEditMode) {
+    if (groupRef.current && !isEditMode) {
       const targetScaleFactor = (hovered && !chatOpen && !isSelected) ? 1.05 : 1.0;
       const floatY = !isSelected ? Math.sin(state.clock.getElapsedTime() * 1.5) * 0.04 : 0;
 
@@ -315,25 +350,38 @@ function RoadmapFloatingObject({
         position[2]
       );
 
-      meshRef.current.scale.lerp(targetScale, 0.15);
-      meshRef.current.position.lerp(targetPos, 0.15);
+      groupRef.current.scale.lerp(targetScale, 0.15);
+      groupRef.current.position.lerp(targetPos, 0.15);
     }
   });
 
-  // Cursor style
+  // Cursor pointer khi hover
   useEffect(() => {
-    if (hovered && !isEditMode && !chatOpen && !isSelected) {
+    if (hovered && !isEditMode && !chatOpen) {
       document.body.style.cursor = 'pointer';
     } else {
       document.body.style.cursor = 'auto';
     }
     return () => { document.body.style.cursor = 'auto'; };
-  }, [hovered, isEditMode, chatOpen, isSelected]);
+  }, [hovered, isEditMode, chatOpen]);
+
+  const handlePointerClick = (e) => {
+    e.stopPropagation();
+    if (isEditMode || chatOpen) return;
+    if (!isSelected) {
+      onSelect(id);
+    } else {
+      // Đang zoom vào bảng -> click để lật mặt
+      if (setIsFlipped) {
+        setIsFlipped(prev => !prev);
+      }
+    }
+  };
 
   const handleObjectChange = () => {
-    if (meshRef.current) {
-      const pos = meshRef.current.position;
-      const scl = meshRef.current.scale;
+    if (groupRef.current) {
+      const pos = groupRef.current.position;
+      const scl = groupRef.current.scale;
 
       const originalSignX = Math.sign(scale[0]);
       const roundedPos = [
@@ -352,30 +400,39 @@ function RoadmapFloatingObject({
 
   return (
     <group>
-      <mesh
-        ref={meshRef}
+      <group
+        ref={groupRef}
         position={position}
         scale={absScale}
-        onClick={(e) => {
-          e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
-        }}
+        onClick={handlePointerClick}
         onPointerOver={(e) => {
           e.stopPropagation();
-          if (!isEditMode && !chatOpen && !isSelected) setHovered(true);
+          if (!isEditMode && !chatOpen) setHovered(true);
         }}
         onPointerOut={(e) => {
           e.stopPropagation();
           if (!isEditMode && !chatOpen) setHovered(false);
         }}
       >
-        <planeGeometry args={[1.8, 1]} />
-        <meshBasicMaterial map={texture} transparent toneMapped={false} />
-      </mesh>
+        {/* Khung xoay 3D lật 2 mặt */}
+        <group ref={flipperRef}>
+          {/* 1. Mặt trước (Ảnh 1) */}
+          <mesh position={[0, 0, 0.003]}>
+            <planeGeometry args={ROADMAP_BOARD_CONFIG.frontSize} />
+            <meshBasicMaterial map={frontTexture} transparent toneMapped={false} />
+          </mesh>
+
+          {/* 2. Mặt sau (Ảnh 2 - Lời cảm ơn), Xoay 180 độ quanh Y */}
+          <mesh position={[0, 0, -0.003]} rotation={[0, Math.PI, 0]}>
+            <planeGeometry args={ROADMAP_BOARD_CONFIG.backSize} />
+            <meshBasicMaterial map={backTexture} transparent toneMapped={false} />
+          </mesh>
+        </group>
+      </group>
 
       {isEditMode && (
         <TransformControls
-          object={meshRef}
+          object={groupRef}
           mode={transformMode}
           showZ={false}
           onObjectChange={handleObjectChange}
@@ -397,7 +454,9 @@ function InteractivePlane({
   isEditMode,
   transformMode,
   onUpdateTransform,
-  chatOpen
+  chatOpen,
+  isFlipped: isBoardFlipped,
+  setIsFlipped: setIsBoardFlipped
 }) {
   if (id === 'obj_diacau') {
     return (
@@ -437,6 +496,7 @@ function InteractivePlane({
     return (
       <RoadmapFloatingObject
         id={id}
+        imageUrl={imageUrl}
         position={position}
         scale={scale}
         isSelected={isSelected}
@@ -445,6 +505,8 @@ function InteractivePlane({
         transformMode={transformMode}
         onUpdateTransform={onUpdateTransform}
         chatOpen={chatOpen}
+        isFlipped={isBoardFlipped}
+        setIsFlipped={setIsBoardFlipped}
       />
     );
   }
@@ -454,7 +516,7 @@ function InteractivePlane({
 
   // Tính toán scale tuyệt đối (luôn dương) để tránh culling mặt trong ThreeJS
   const absScale = [Math.abs(scale[0]), scale[1], scale[2]];
-  const isFlipped = scale[0] < 0;
+  const isScaleNegativeX = scale[0] < 0;
 
   // Nạp texture của ảnh vật phẩm
   const baseTexture = useTexture(imageUrl);
@@ -463,7 +525,7 @@ function InteractivePlane({
   const texture = React.useMemo(() => {
     if (!baseTexture) return null;
     const tex = baseTexture.clone();
-    if (isFlipped) {
+    if (isScaleNegativeX) {
       tex.wrapS = RepeatWrapping;
       tex.repeat.x = -1;
       tex.offset.x = 1;
@@ -473,7 +535,7 @@ function InteractivePlane({
     }
     tex.needsUpdate = true;
     return tex;
-  }, [baseTexture, isFlipped]);
+  }, [baseTexture, isScaleNegativeX]);
 
   const shaderRef = useRef();
 
@@ -546,7 +608,7 @@ function InteractivePlane({
           scale={absScale}
           onClick={(e) => {
             e.stopPropagation();
-            if (!isEditMode && !chatOpen && !anySelected) onSelect(id);
+            if (!isEditMode && !chatOpen && !isSelected) onSelect(id);
           }}
           onPointerOver={(e) => {
             e.stopPropagation();

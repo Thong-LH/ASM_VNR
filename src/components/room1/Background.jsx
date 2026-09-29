@@ -38,7 +38,7 @@ function Background({ url, selectedObjectId, isEditMode }) {
   // Hiệu ứng Spotlight: Làm mờ tối nền khi vật phẩm được chọn
   useEffect(() => {
     if (bgRef.current && bgRef.current.material) {
-      const targetColor = isEditMode ? 1.0 : (selectedObjectId ? 0.3 : 1.0);
+      const targetColor = isEditMode ? 1.0 : (selectedObjectId ? 0.08 : 1.0);
       gsap.to(bgRef.current.material.color, {
         r: targetColor,
         g: targetColor,

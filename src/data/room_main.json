@@ -1,0 +1,63 @@
+{
+  "room_id": "room_main",
+  "background": {
+    "url": "/assets/background_room.png",
+    "z_index": 0
+  },
+  "interactive_objects": [
+    {
+      "id": "obj_tree",
+      "image_url": "/assets/tree.png",
+      "position": [
+        -1.21,
+        -0.23,
+        0.6
+      ],
+      "scale": [
+        2.63,
+        1.32,
+        1
+      ],
+      "content": {
+        "title": "Phần 1: Cấu Trúc & Bí Quyết Quy Tụ",
+        "desc": "Chủ thể và Lý do Hồ Chí Minh mở rộng khối đại đoàn kết."
+      }
+    },
+    {
+      "id": "obj_book",
+      "image_url": "/assets/book.png",
+      "position": [
+        0.82,
+        -0.58,
+        0.6
+      ],
+      "scale": [
+        1.18,
+        0.75,
+        1
+      ],
+      "content": {
+        "title": "Phần 2: Bước Ngoặt Lý Luận Lịch Sử",
+        "desc": "Phản biện: Sự vận dụng sáng tạo học thuyết Mác - Lênin."
+      }
+    },
+    {
+      "id": "obj_diacau",
+      "image_url": "/assets/truc.png",
+      "position": [
+        2.02,
+        -0.18,
+        0.7
+      ],
+      "scale": [
+        1.11,
+        1.16,
+        1
+      ],
+      "content": {
+        "title": "Phần 3: Hành Trang Hướng Tới Tương Lai",
+        "desc": "Bài học thực tiễn trong kỷ nguyên hội nhập hiện nay."
+      }
+    }
+  ]
+}

@@ -142,6 +142,7 @@ function Scene({
         onClose={() => setSelectedObjectId(null)}
         onMascotClick={onMascotClick}
         isEditMode={isEditMode}
+        chatOpen={chatOpen}
         entryDirection={entryDirection}
         exitDirection={exitDirection}
         onExitComplete={onExitComplete}

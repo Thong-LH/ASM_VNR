@@ -4,6 +4,16 @@ import { useTexture } from '@react-three/drei';
 import { Vector3, RepeatWrapping } from 'three';
 import gsap from 'gsap';
 
+// 🎛️ BẢNG CONFIG KHOẢNG FRAME VẪY TAY CỦA ROBOT MASCOT (WELCOME LOOP):
+// Bộ sprite sheet welcome có tổng cộng 13 frame (từ 0 đến 12).
+// Để tay luôn giơ lên và vẫy liên tục (không bị hạ tay xuống):
+// - startFrame: frame bắt đầu chu kỳ vẫy tay ở trên cao
+// - endFrame: frame kết thúc chu kỳ vẫy trước khi hạ tay xuống
+export const WELCOME_LOOP_CONFIG = {
+  startFrame: 2, // Bắt đầu chu kỳ vẫy từ index 2
+  endFrame: 9    // Kết thúc chu kỳ vẫy ở index 9
+};
+
 // Component Trợ lý Robot bay 3D với hiệu ứng Sprite Sheet & Đồng hành
 function Mascot({
   selectedObjectId,
@@ -14,7 +24,9 @@ function Mascot({
   entryDirection,
   exitDirection,
   onExitComplete,
-  roadmapStage = 0
+  roadmapStage = 0,
+  chatOpen = false,
+  isRoadmapFlipped = false
 }) {
   const spriteRef = useRef();
 
@@ -32,13 +44,13 @@ function Mascot({
   };
 
   // State quản lý Hướng nhìn ('RIGHT' | 'LEFT') và Trạng thái hoạt ảnh ('idle' | 'pointing' | 'thinking' | 'welcome')
-  const [lookDirection, setLookDirection] = useState('LEFT');
+  const [lookDirection, setLookDirection] = useState(chatOpen ? 'RIGHT' : 'LEFT');
   const [actionState, setActionState] = useState(entryDirection ? 'idle' : mascotState);
   const isTransitioningRef = useRef(false);
   const hasEnteredRef = useRef(false);
 
-  // Vị trí bến đậu mặc định ở góc phải dưới
-  const defaultPos = useMemo(() => new Vector3(2.2, -0.5, 0.6), []);
+  // Vị trí bến đậu mặc định ở góc phải dưới (đã hạ thấp và dời sang phải)
+  const defaultPos = useMemo(() => new Vector3(2, -1.5, 0.6), []);
 
   // Vị trí bắt đầu nếu bay từ phòng khác vào (ENTRY ROOM) - Dùng useRef để cố định lúc mount tránh giật khung hình khi re-render
   const initialPos = useRef([
@@ -106,47 +118,21 @@ function Mascot({
       const activeObj = roomData.interactive_objects.find(obj => obj.id === selectedObjectId);
       if (activeObj) {
         const isRightSide = activeObj.position[0] > 1.5;
-        if (selectedObjectId === 'obj_sodo') {
-          targetX = activeObj.position[0] - 1;
-          targetY = activeObj.position[1] + 0.15;
+        if (selectedObjectId === 'obj_tree') {
+          targetX = activeObj.position[0] - 0.5; // Đứng bên trái chậu măng tre, hướng nhìn sang phải
+          targetY = activeObj.position[1] + 0.2;
           targetZ = activeObj.position[2] + 0.15;
-        } else if (selectedObjectId === 'obj_tv') {
-          targetX = activeObj.position[0] - 0.95;
-          targetY = activeObj.position[1] + 0.15;
-          targetZ = activeObj.position[2] + 0.15;
-        } else if (selectedObjectId === 'obj_saptien') {
-          targetX = activeObj.position[0] - 0.34; // Xích lại gần hơn nữa sang bên phải
-          targetY = activeObj.position[1] + 0.07; // Hạ thấp độ cao xuống một chút
+        } else if (selectedObjectId === 'obj_book') {
+          targetX = activeObj.position[0] + 0.65; // Đứng bên phải chồng sách lý luận
+          targetY = activeObj.position[1] + 0.2;
           targetZ = activeObj.position[2] + 0.15;
         } else if (selectedObjectId === 'obj_diacau') {
-          targetX = activeObj.position[0] + 0.7; // Đứng bên phải quả địa cầu
-          targetY = activeObj.position[1] + 0.15;
-          targetZ = activeObj.position[2] + 0.15;
-        } else if (selectedObjectId === 'obj_bieudo') {
-          targetX = activeObj.position[0] - 1; // Đứng dạt hẳn ra biên trái của bảng biểu đồ siêu rộng (3.02)
-          targetY = activeObj.position[1] + 0.2;  // Hạ thấp độ cao xuống vì biểu đồ treo khá cao
-          targetZ = activeObj.position[2] + 0.15;
-        } else if (selectedObjectId === 'obj_hanhtrinh') {
-          targetX = activeObj.position[0] - 1; // Đứng dạt xa sang bên trái cuộn giấy hành trình rộng
-          targetY = activeObj.position[1] + 0.25;
+          targetX = activeObj.position[0] + 0.5; // Đứng bên phải quả địa cầu / trục
+          targetY = activeObj.position[1] - 0.05;
           targetZ = activeObj.position[2] + 0.15;
         } else if (selectedObjectId === 'obj_roadmap') {
-          if (roadmapStage === 1) {
-            targetX = activeObj.position[0] - 1.0;
-            targetY = activeObj.position[1] + 0.45;
-          } else if (roadmapStage === 2) {
-            targetX = activeObj.position[0] + 1.0;
-            targetY = activeObj.position[1] + 0.45;
-          } else if (roadmapStage === 3) {
-            targetX = activeObj.position[0] - 1.0;
-            targetY = activeObj.position[1] - 0.15;
-          } else if (roadmapStage === 4) {
-            targetX = activeObj.position[0] + 1.0;
-            targetY = activeObj.position[1] - 0.15;
-          } else {
-            targetX = activeObj.position[0] - 1.2;
-            targetY = activeObj.position[1] + 0.1;
-          }
+          targetX = activeObj.position[0] - 1.2; // Đứng bên phải bảng 3D phòng 2
+          targetY = activeObj.position[1] - 0.15;
           targetZ = activeObj.position[2] + 0.15;
         } else {
           targetX = activeObj.position[0] + (isRightSide ? 0.55 : -0.55);
@@ -170,8 +156,9 @@ function Mascot({
     const isMovingRight = deltaX > 0;
     const tiltAngle = isMovingRight ? -0.18 : 0.18;
 
-    // Hướng nhìn tiếp đất thuyết minh (Robot đứng bên trái vật thể -> nhìn PHẢI; robot đứng bên phải -> nhìn TRÁI; ở bến đỗ mặc định -> nhìn TRÁI vào phòng)
+    // Hướng nhìn tiếp đất thuyết minh (Robot đứng bên trái vật thể -> nhìn PHẢI; robot đứng bên phải -> nhìn TRÁI; ở bến đỗ mặc định: mở chat -> nhìn PHẢI sang ô chat, đóng chat -> nhìn TRÁI vào phòng)
     const landingDirection = (() => {
+      if (chatOpen && !selectedObjectId) return 'RIGHT';
       if (!selectedObjectId || !roomData) return 'LEFT';
       const activeObj = roomData.interactive_objects.find(obj => obj.id === selectedObjectId);
       if (!activeObj) return 'LEFT';
@@ -197,7 +184,11 @@ function Mascot({
         onComplete: () => {
           isTransitioningRef.current = false;
           setLookDirection(landingDirection);
-          setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+          if (isRoadmapFlipped) {
+            setActionState('welcome');
+          } else {
+            setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+          }
         }
       });
 
@@ -210,9 +201,13 @@ function Mascot({
       // Nếu đã ở rất sát rồi (hoặc do thay đổi state không liên quan vị trí), chỉ cần đổi trạng thái hoạt ảnh, tránh chạy lại GSAP gây khựng/nháy hình
       isTransitioningRef.current = false;
       setLookDirection(landingDirection);
-      setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+      if (isRoadmapFlipped) {
+        setActionState('welcome');
+      } else {
+        setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+      }
     }
-  }, [selectedObjectId, roomData, exitDirection, entryDirection, defaultPos, roadmapStage]);
+  }, [selectedObjectId, roomData, exitDirection, entryDirection, defaultPos, mascotState, chatOpen, isRoadmapFlipped]);
 
   // --- PHẦN 2: XỬ LÝ BAY THOÁT KHỎI MÀN HÌNH KHI ĐỔI PHÒNG (EXIT ROOM) ---
   useEffect(() => {
@@ -248,10 +243,18 @@ function Mascot({
     }
   }, [exitDirection, onExitComplete]);
 
-  // Đồng bộ trạng thái đứng yên khi không di chuyển (chỉ chạy khi Mascot đã dừng hoàn toàn)
+  // Đồng bộ trạng thái đứng yên và hướng nhìn khi không di chuyển (chỉ chạy khi Mascot đã dừng hoàn toàn)
   useEffect(() => {
     if (isTransitioningRef.current) return;
-    if (selectedObjectId) {
+    if (chatOpen && !selectedObjectId) {
+      setLookDirection('RIGHT');
+    } else if (!selectedObjectId) {
+      setLookDirection('LEFT');
+    }
+
+    if (isRoadmapFlipped) {
+      setActionState('welcome');
+    } else if (selectedObjectId) {
       if (mascotState === 'thinking') {
         setActionState('thinking');
       } else {
@@ -260,7 +263,7 @@ function Mascot({
     } else {
       setActionState(mascotState);
     }
-  }, [mascotState, selectedObjectId, roadmapStage]);
+  }, [mascotState, selectedObjectId, chatOpen, isRoadmapFlipped]);
 
 
 
@@ -295,7 +298,15 @@ function Mascot({
     }
     if (textureWelcome) {
       if (actionState === 'welcome') {
-        const idx = Math.min(currentFrame, 12);
+        const { startFrame, endFrame } = WELCOME_LOOP_CONFIG;
+        const loopLength = Math.max(1, endFrame - startFrame + 1);
+        let idx = 0;
+        if (currentFrame < startFrame) {
+          idx = currentFrame; // Lần đầu giơ tay lên từ 0 -> startFrame
+        } else {
+          // Sau đó chỉ lặp lại trong khoảng tay giơ cao vẫy liên tục
+          idx = startFrame + ((currentFrame - startFrame) % loopLength);
+        }
         textureWelcome.offset.x = isWelcomeFlipped ? (idx + 1) / 13 : idx / 13;
       } else {
         textureWelcome.offset.x = isWelcomeFlipped ? 1 / 13 : 0;

@@ -41,7 +41,7 @@ function Background({ url, selectedObjectId, isEditMode }) {
   useEffect(() => {
     if (bgRef.current && bgRef.current.material) {
       // Khi ở chế độ Edit, giữ nền sáng rõ để dễ căn chỉnh
-      const targetColor = isEditMode ? 1.0 : (selectedObjectId ? 0.3 : 1.0);
+      const targetColor = isEditMode ? 1.0 : (selectedObjectId ? 0.08 : 1.0);
 
       gsap.to(bgRef.current.material.color, {
         r: targetColor,

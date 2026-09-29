@@ -71,9 +71,9 @@ export default function Intro({ onEnterMuseum }) {
         
         {/* Header - Chủ đề giới thiệu */}
         <div className={`intro-header ${isOpen ? 'slide-up' : ''}`}>
-          <h1 className="intro-title">ĐỔI MỚI TOÀN DIỆN</h1>
+          <h1 className="intro-title">TƯ TƯỞNG HỒ CHÍ MINH</h1>
           <p className="intro-subtitle">
-            Đưa đất nước ra khỏi khủng hoảng kinh tế - xã hội (1986–1996)
+            Đại đoàn kết toàn dân tộc — Nguồn lực nội sinh mang sức mạnh vô địch
           </p>
         </div>
 
