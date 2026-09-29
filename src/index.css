@@ -3017,12 +3017,12 @@ body,
 /* ──────── KHUNG DÁN HÌNH ẢNH TO RÕ & KÍCH THƯỚC ĐẶC TRƯNG THEO HIỆN VẬT GỐC ──────── */
 .stage-photo-slot-wrap {
   width: 100%;
-  height: 215px;
+  height: 195px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-end;
-  margin-bottom: 0.85rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
 }
 
 .stage-photo-slot {
@@ -3038,10 +3038,10 @@ body,
   overflow: hidden;
 }
 
-/* GIAI ĐOẠN 1: Tác phẩm Tuyên ngôn Cộng sản (Khổ sách kinh điển đứng 189x235 -> Scale: 142x176) */
+/* GIAI ĐOẠN 1: Tác phẩm Tuyên ngôn Cộng sản */
 .stage-column.stage-1 .stage-photo-slot {
-  width: 142px;
-  height: 176px;
+  width: 145px;
+  height: 185px;
   border: 2px dashed rgba(52, 211, 153, 0.55);
   background: #0b1b15;
 }
@@ -3050,11 +3050,11 @@ body,
   border: 1.5px solid rgba(52, 211, 153, 0.7);
 }
 
-/* GIAI ĐOẠN 2: Sơ thảo Luận cương Lênin (Bản thảo báo chí khổ ngang dài 800x420 -> Scale: 236x124 - Đầy đủ toàn bộ chiều dài trang) */
+/* GIAI ĐOẠN 2: Sơ thảo Luận cương Lênin */
 .stage-column.stage-2 .stage-photo-slot {
-  width: 236px;
+  width: 220px;
   max-width: 100%;
-  height: 124px;
+  height: 185px;
   border: 2px dashed rgba(45, 212, 191, 0.55);
   background: #071515;
 }
@@ -3063,10 +3063,10 @@ body,
   border: 1.5px solid rgba(45, 212, 191, 0.7);
 }
 
-/* GIAI ĐOẠN 3: Tác phẩm Đường Kách Mệnh (Sách bìa đứng dày dặn 374x480 -> Scale: 156x200) */
+/* GIAI ĐOẠN 3: Tác phẩm Đường Kách Mệnh */
 .stage-column.stage-3 .stage-photo-slot {
-  width: 156px;
-  height: 200px;
+  width: 145px;
+  height: 185px;
   border: 2px dashed rgba(249, 115, 22, 0.7);
   background: #221208;
 }
@@ -3202,8 +3202,9 @@ body,
 
 /* Riêng tài liệu Luận cương Lênin: Hiển thị đầy đủ trọn vẹn toàn trang không bị xén */
 .stage-column.stage-2 .stage-photo-img {
-  object-fit: cover;
+  object-fit: contain;
   background: #071515;
+  padding: 4px;
 }
 
 .stage-photo-zoom-btn {
@@ -3282,6 +3283,7 @@ body,
   text-align: center;
   margin-bottom: 0.45rem;
   min-height: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3295,21 +3297,25 @@ body,
   color: #fff7ed;
 }
 
-/* ──────── KHẨU HIỆU LỊCH SỬ KINH ĐIỂN TRÊN TỪNG BỤC ──────── */
+/* ──────── KHẨU HIỆU LỊCH SỬ KINH ĐIỂN TRÊN TỪNG BỤC (CỐ ĐỊNH CHIỀU CAO THẲNG HÀNG) ──────── */
 .stage-slogan-card {
   font-family: var(--font-serif-body, 'Playfair Display', Georgia, serif);
   font-style: italic;
-  font-size: 0.78rem;
-  line-height: 1.38;
+  font-size: 0.77rem;
+  line-height: 1.35;
   text-align: center;
-  padding: 5px 8px;
+  padding: 6px 10px;
   border-radius: 6px;
-  margin-bottom: 0.75rem;
-  max-width: 170px;
-  min-height: 48px;
+  margin-bottom: 0.85rem;
+  width: 100%;
+  max-width: 220px;
+  height: 64px;
+  min-height: 64px;
+  max-height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
   backdrop-filter: blur(6px);
