@@ -68,6 +68,11 @@ export default function ThreeStageTimeline({ images = {}, onPhotoClick }) {
           {/* TÊN NHÂN VẬT ĐẶT DƯỚI ẢNH, TRÊN TAM GIÁC */}
           <h4 className="stage-person-name">C.MÁC & PH.ĂNG-GHEN</h4>
 
+          {/* KHẨU HIỆU LỊCH SỬ KINH ĐIỂN */}
+          <div className="stage-slogan-card emerald">
+            “Vô sản tất cả các nước, đoàn kết lại!”
+          </div>
+
           {/* BỆ 2.5D TAM GIÁC NGƯỢC THU GỌN - CHỈ CHỨA LOGO */}
           <div className="stage-prism-container">
             {/* Nắp vát 3D đục */}
@@ -143,6 +148,11 @@ export default function ThreeStageTimeline({ images = {}, onPhotoClick }) {
 
           {/* TÊN NHÂN VẬT */}
           <h4 className="stage-person-name teal">V.I. LÊNIN</h4>
+
+          {/* KHẨU HIỆU LỊCH SỬ KINH ĐIỂN */}
+          <div className="stage-slogan-card teal">
+            “Vô sản tất cả các nước và các dân tộc bị áp bức, đoàn kết lại!”
+          </div>
 
           {/* BỆ 2.5D TAM GIÁC NGƯỢC THU GỌN - CHỈ CHỨA LOGO */}
           <div className="stage-prism-container">
@@ -226,6 +236,11 @@ export default function ThreeStageTimeline({ images = {}, onPhotoClick }) {
 
           {/* TÊN NHÂN VẬT */}
           <h4 className="stage-person-name orange">HỒ CHÍ MINH</h4>
+
+          {/* KHẨU HIỆU ĐẠI ĐOÀN KẾT */}
+          <div className="stage-slogan-card orange">
+            “Đoàn kết, đoàn kết, đại đoàn kết — Thành công, thành công, đại thành công!”
+          </div>
 
           {/* BỆ 2.5D TAM GIÁC NGƯỢC THU GỌN - CHỈ CHỨA LOGO */}
           <div className="stage-prism-container">

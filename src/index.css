@@ -3280,7 +3280,7 @@ body,
   color: #ecfdf5;
   text-transform: uppercase;
   text-align: center;
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.45rem;
   min-height: 24px;
   display: flex;
   align-items: center;
@@ -3293,6 +3293,48 @@ body,
 
 .stage-person-name.orange {
   color: #fff7ed;
+}
+
+/* ──────── KHẨU HIỆU LỊCH SỬ KINH ĐIỂN TRÊN TỪNG BỤC ──────── */
+.stage-slogan-card {
+  font-family: var(--font-serif-body, 'Playfair Display', Georgia, serif);
+  font-style: italic;
+  font-size: 0.78rem;
+  line-height: 1.38;
+  text-align: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  max-width: 170px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.stage-slogan-card.emerald {
+  color: #a7f3d0;
+  background: rgba(6, 44, 30, 0.55);
+  border: 1px solid rgba(52, 211, 153, 0.28);
+  text-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+}
+
+.stage-slogan-card.teal {
+  color: #99f6e4;
+  background: rgba(8, 38, 38, 0.55);
+  border: 1px solid rgba(45, 212, 191, 0.28);
+  text-shadow: 0 0 10px rgba(45, 212, 191, 0.3);
+}
+
+.stage-slogan-card.orange {
+  color: #fed7aa;
+  background: rgba(50, 20, 8, 0.55);
+  border: 1px solid rgba(249, 115, 22, 0.35);
+  text-shadow: 0 0 10px rgba(249, 115, 22, 0.35);
 }
 
 /* ──────── BỆ 2.5D TAM GIÁC NGƯỢC THU GỌN - CHỈ CHỨA LOGO ──────── */
