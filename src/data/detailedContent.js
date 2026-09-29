@@ -128,11 +128,13 @@ const detailedContent = {
             images: [
               {
                 url: "/assets/hoi_nghi_dien_hong.jpeg",
-                caption: "Hội nghị Diên Hồng thời Trần: các bô lão đồng thanh hô “Đánh!” trước cuộc kháng chiến chống quân Nguyên Mông."
+                caption: "Hội nghị Diên Hồng thời Trần: các bô lão đồng thanh hô “Đánh!” trước cuộc kháng chiến chống quân Nguyên Mông.",
+                sourceUrl: "https://cdn2.tuoitre.vn/plo/image/Uploaded/nguyenthao/2024_02_08/hoi-nghi-dien-hong-5430.jpeg"
               },
               {
                 url: "/assets/bac_ho_nong_dan.jpg",
-                caption: "Chủ tịch Hồ Chí Minh thăm hỏi bà con nông dân trên đồng lúa."
+                caption: "Chủ tịch Hồ Chí Minh thăm hỏi bà con nông dân trên đồng lúa.",
+                sourceUrl: "https://www.qdnd.vn/tu-lieu-ho-so/ngay-nay-nam-xua/28-9-1945-bac-ho-keu-goi-se-com-nhuong-ao-672387"
               }
             ],
             highlightQuote: {
@@ -160,22 +162,26 @@ const detailedContent = {
               {
                 tag: "Thắng lợi đỉnh cao",
                 url: "/assets/mit_tinh_nha_hat_lon.jpg",
-                caption: "Mít tinh 19/8/1945 tại Nhà hát Lớn — Toàn dân tộc nhất tề đứng lên làm nên thắng lợi Cách mạng Tháng Tám."
+                caption: "Mít tinh tại Quảng trường Nhà hát Lớn Hà Nội ngày 19/8/1945",
+                sourceUrl: "https://special.vietnamplus.vn/wp-content/uploads/2021/03/ttxvn0901hc-1578581941-20.jpg"
               },
               {
                 tag: "Chính phủ đại đoàn kết",
                 url: "/assets/dai_bieu_quoc_hoi_1946.jpg",
-                caption: "Quốc hội khóa I (1946) — Mở rộng liên hiệp, quy tụ các nhân sĩ, trí thức ngoài Đảng cùng gánh vác việc nước."
+                caption: "Chủ tịch Hồ Chí Minh cùng đại biểu các tầng lớp nhân dân trong “Tuần lễ vàng”, tháng 9/1945.",
+                sourceUrl: "https://icdn.dantri.com.vn/dansinh/2024/08/29/anh-4-4-1724867091962.jpg"
               },
               {
                 tag: "Trọng dụng hiền tài",
                 url: "/assets/bac_ho_huynh_thuc_khang.jpg",
-                caption: "Bác Hồ và cụ Huỳnh Thúc Kháng (1946) — Tôn trọng bậc túc nho yêu nước, đoàn kết không phân biệt đảng phái."
+                caption: "Chủ tịch Hồ Chí Minh và cụ Huỳnh Thúc Kháng cùng các thành viên Chính phủ, năm 1946.",
+                sourceUrl: "https://file.qdnd.vn/data/images/0/2016/09/30/phucthang/30092016ttrucban63.jpg?w=578"
               },
               {
                 tag: "Quy tụ lòng dân",
                 url: "/assets/tuan_le_vang.jpg",
-                caption: "Tuần lễ vàng (1945) — Từ nhà tư sản đến người lao động nghèo đều dốc lòng quyên góp của cải cứu quốc."
+                caption: "Không khí “Tuần lễ vàng” tại Hà Nội, tháng 9/1945.",
+                sourceUrl: "https://i.ex-cdn.com/vietnamfinance.vn/files/f1/news/tunglam/2019/8/29/vnf-tuan-le-vang.jpg"
               }
             ]
           }
