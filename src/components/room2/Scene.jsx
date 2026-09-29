@@ -63,6 +63,9 @@ const CHAT_ZOOM_CONFIG = {
   cameraLookAt: [2.1, -1.3, 0.6]
 };
 
+const DEFAULT_USER_PAN = { x: 0, y: 0 };
+const DEFAULT_ZOOM_CONFIG = {};
+
 // Scene Room 2 — camera tự động zoom dựa trên zoomConfig prop
 function Scene({
   roomData,
@@ -76,14 +79,14 @@ function Scene({
   mascotState,
   chatOpen,
   onMascotClick,
-  zoomConfig = {},
+  zoomConfig = DEFAULT_ZOOM_CONFIG,
   entryDirection,
   exitDirection,
   onExitComplete,
   isRoadmapFlipped = false,
   setIsRoadmapFlipped,
   userZoomOffset = 0,
-  userPanOffset = { x: 0, y: 0 }
+  userPanOffset = DEFAULT_USER_PAN
 }) {
   const { camera } = useThree();
   const lookAtTarget = useRef(new Vector3(0, 0, 0));
@@ -149,7 +152,7 @@ function Scene({
       gsap.to(camera.position, { x: 0, y: 0, z: 5, duration: 1.0, ease: 'power2.inOut' });
       gsap.to(lookAtTarget.current, { x: 0, y: 0, z: 0, duration: 1.0, ease: 'power2.inOut' });
     }
-  }, [selectedObjectId, chatOpen, roomData, isEditMode, camera, setShowUI, zoomConfig, userZoomOffset, userPanOffset]);
+  }, [selectedObjectId, chatOpen, roomData, isEditMode, camera, setShowUI, zoomConfig, userZoomOffset, userPanOffset?.x, userPanOffset?.y]);
 
   return (
     <group>

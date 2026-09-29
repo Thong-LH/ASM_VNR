@@ -31,7 +31,7 @@ const ROOMS = {
     zoomConfig: {
       obj_tree: { zoomDist: 2.3, camOffsetX: 1.5, camOffsetY: 0.0 },
       obj_book: { zoomDist: 3, camOffsetX: -1.91, camOffsetY: -0.07 },
-      obj_diacau: { zoomDist: 1.7, camOffsetX: -1, camOffsetY: 0.0 },
+      obj_diacau: { zoomDist: 1.7, camOffsetX: -1.02, camOffsetY: 0.0 },
     }
   },
   room2: {
@@ -108,6 +108,7 @@ export default function App() {
     setTourActive(false);
     setTourIndex(0);
     setChatOpen(false);
+    setMascotState('idle');
     setExitingToRoom(targetRoomId);
   };
 
@@ -117,6 +118,7 @@ export default function App() {
       setPrevRoom(currentRoomId);
       setCurrentRoomId(exitingToRoom);
       setExitingToRoom(null);
+      setMascotState('idle');
     }
   };
 
@@ -144,6 +146,14 @@ export default function App() {
       const nextIndex = tourIndex + 1;
       setTourIndex(nextIndex);
       setSelectedObjectId(currentTour[nextIndex]);
+    } else if (currentRoomId === 'room1') {
+      // 1. Đóng hiện vật, zoom out camera toàn cảnh và đưa mascot về idle
+      exitTour();
+
+      // 2. Chờ camera zoom out ra toàn cảnh để người dùng thấy rõ mascot bay đi sang Phòng 2
+      setTimeout(() => {
+        handleRoomSwitch('room2');
+      }, 700);
     } else {
       exitTour();
     }
@@ -301,44 +311,6 @@ export default function App() {
         </>
       )}
 
-      {/* Giao diện tương tác lật mặt 3D cho Bảng Phòng 2 (Không dùng SidePanel) */}
-      {selectedObjectId === 'obj_roadmap' && showUI && !isEditMode && (
-        <React.Fragment>
-          {/* Nút đóng góc trên phải */}
-          <button
-            className="roadmap-floating-close-btn ui-interactive"
-            onClick={() => { setSelectedObjectId(null); setIsRoadmapFlipped(false); }}
-            title="Thoát xem bảng (✕)"
-          >
-            <X size={20} />
-          </button>
-
-          {/* Thanh công cụ lật 3D ở đáy màn hình */}
-          <div className="roadmap-flip-bar ui-interactive">
-            <button
-              className="roadmap-flip-btn main-flip"
-              onClick={() => setIsRoadmapFlipped(!isRoadmapFlipped)}
-              title="Nhấp để xoay lật 3D đổi mặt bảng"
-            >
-              <RotateCcw size={16} className={`flip-rotate-icon ${isRoadmapFlipped ? 'rotated' : ''}`} />
-              <span>{isRoadmapFlipped ? 'Lật về Mặt Trước (Ảnh 1)' : 'Lật sang Mặt Sau (Ảnh 2)'}</span>
-            </button>
-
-            <button
-              className="roadmap-flip-btn close-btn"
-              onClick={() => { setSelectedObjectId(null); setIsRoadmapFlipped(false); }}
-              title="Thoát xem bảng"
-            >
-              <X size={16} />
-              <span>Thoát</span>
-            </button>
-          </div>
-
-          <div className="roadmap-screen-hint">
-            ✦ Nhấp trực tiếp vào bảng 3D để lật mặt ✦
-          </div>
-        </React.Fragment>
-      )}
 
       {/* Thanh Edit Mode Toolbar */}
       <EditModeToolbar

@@ -6,7 +6,7 @@ import TheoryPracticeCompare from '../common/TheoryPracticeCompare';
 import GlobeCoreLessons from '../common/GlobeCoreLessons';
 
 // Panel thuyết minh hiện vật bên phải/trái màn hình (được tái sử dụng cho tất cả các phòng)
-function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, detailedContent, tourActive, tourIndex, tourLength, isLastRoom, onNext, onPrev, onExit, roadmapStage = 0, setRoadmapStage }) {
+function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, detailedContent, tourActive, tourIndex, tourLength, isLastRoom, onNext, onPrev, onExit, roadmapStage = 0, setRoadmapStage, isRoadmapFlipped = false, setIsRoadmapFlipped }) {
   const [lightboxImage, setLightboxImage] = React.useState(null);
   const [treeTab, setTreeTab] = React.useState(1);
   const [activeSubTab, setActiveSubTab] = React.useState(1);
@@ -607,10 +607,11 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
               </div>
             )}
           </div>
+
         </div>
       </div>
 
-      {/* Thanh công cụ mini-tour nằm tách biệt trực quan ở phía dưới khối nội dung */}
+      {/* 🧭 THANH ĐIỀU HƯỚNG TOUR (ĐỘC LẬP NGOÀI SIDEPANEL) */}
       {tourActive && (
         <div className={`museum-tour-mini-bar ui-interactive ${isRightAlignedObj ? 'left-aligned' : ''}`}>
           <button
@@ -629,9 +630,9 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
           <button
             className="tour-mini-btn next primary"
             onClick={onNext}
-            title={tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế tiếp" : "Hoàn thành tour"}
+            title="Tiếp tục"
           >
-            {tourIndex === tourLength - 1 && !isLastRoom ? "Sang phòng kế ▶" : "Hoàn thành ✕"}
+            Tiếp tục &gt;
           </button>
 
           <button

@@ -34,7 +34,9 @@ function Globe3DObject({
   const prevMouseRef = useRef({ x: 0, y: 0 });
   const velocityRef = useRef({ x: 0, y: GLOBE_CONFIG.spinSpeed });
 
-  const absScale = [Math.abs(scale[0]), scale[1], scale[2]];
+  // Ép tỉ lệ 1:1:1 đồng nhất tuyệt đối để quả địa cầu tròn xoe hoàn hảo, không bị bóp méo hình elip/trứng
+  const uniformScale = Math.abs(scale[1] || scale[0] || 1.16);
+  const absScale = [uniformScale, uniformScale, uniformScale];
 
   const standTexture = useTexture('/assets/truc.png');
   const mapTexture = useTexture('/assets/earth_map_texture.jpg');
