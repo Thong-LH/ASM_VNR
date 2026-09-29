@@ -36,8 +36,8 @@ const ROOMS = {
   },
   room2: {
     id: 'room2',
-    name: 'Phòng 2: Đại hội VI & Đổi Mới (1986)',
-    shortName: 'Phòng 2: Đại hội VI',
+    name: 'Phòng 2: Kết Luận',
+    shortName: 'Phòng 2: Kết Luận',
     initialData: initialRoom2Data,
     detailedContent: detailedContent2,
     tour: ["obj_roadmap"],
@@ -293,7 +293,7 @@ export default function App() {
             <button
               className="room-nav-arrow right ui-interactive"
               onClick={() => handleRoomSwitch('room2')}
-              title="Sang Phòng 2: Đại hội VI"
+              title="Sang Phòng 2: Kết Luận"
             >
               <ChevronRight size={28} />
             </button>
