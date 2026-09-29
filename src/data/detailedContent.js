@@ -55,7 +55,7 @@ const detailedContent = {
         },
         quote: {
           text: "Đó là nền gốc của đại đoàn kết. Nó cũng như cái nền của nhà, gốc của cây.",
-          author: "Hồ Chí Minh — Đại hội thống nhất Việt Minh - Liên Việt, 1951"
+          author: "Hồ Chí Minh — Đại hội thống nhất Việt Minh - Liên Việt, 1955"
         }
       },
       {
@@ -90,7 +90,7 @@ const detailedContent = {
             quotes: [
               {
                 source: "Đường Kách mệnh (1927)",
-                text: "Sĩ, nông, công, thương đều nhất trí chống lại cường quyền."
+                text: "Dân tộc cách mệnh thì chưa phân giai cấp, nghĩa là sĩ, nông, công, thương đều nhất trí chống lại cường quyền."
               },
               {
                 source: "Hội nghị Trung ương 8 (5/1941)",
