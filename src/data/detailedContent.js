@@ -62,7 +62,7 @@ const detailedContent = {
         tabTitle: "Tab 2",
         slideLabel: "Slide 2.2",
         title: "Phần 2.2: Vì Sao Mở Rộng Khối Đại Đoàn Kết?",
-        subtitle: "Ba căn cứ lịch sử, tương quan lực lượng và truyền thống dân tộc.",
+        subtitle: "Bốn căn cứ lịch sử, tương quan lực lượng, truyền thống và phương châm quy tụ.",
         subTabs: [
           {
             id: 1,
@@ -133,46 +133,45 @@ const detailedContent = {
               text: "Dễ trăm lần không dân cũng chịu,\nKhó vạn lần dân liệu cũng xong.",
               author: "Chủ tịch Hồ Chí Minh"
             }
-          }
-        ]
-      },
-      {
-        id: 3,
-        tabTitle: "Tab 3",
-        slideLabel: "Slide 2.3",
-        title: 'Phần 2.3: Phương Châm "Cầu Đồng Tồn Dị" & Thắng Lợi',
-        subtitle: "Nguyên tắc liên hiệp các giai cấp và minh chứng thực tiễn Cách mạng Tháng Tám.",
-        principle: {
-          title: 'Phương châm "Cầu đồng tồn dị"',
-          quote: {
-            text: "Ai có tài, có đức, có sức, có lòng phụng sự Tổ quốc và phục vụ nhân dân thì ta đoàn kết với họ.",
-            author: "Chủ tịch Hồ Chí Minh"
-          }
-        },
-        diagramImage: {
-          url: "/assets/so_do_cau_dong_ton_di.png",
-          caption: 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'
-        },
-        proofImages: [
-          {
-            tag: "Thắng lợi đỉnh cao",
-            url: "/assets/mit_tinh_nha_hat_lon.jpg",
-            caption: "Mít tinh 19/8/1945 tại Nhà hát Lớn — Toàn dân tộc nhất tề đứng lên làm nên thắng lợi Cách mạng Tháng Tám."
           },
           {
-            tag: "Chính phủ đại đoàn kết",
-            url: "/assets/dai_bieu_quoc_hoi_1946.jpg",
-            caption: "Quốc hội khóa I (1946) — Mở rộng liên hiệp, quy tụ các nhân sĩ, trí thức ngoài Đảng cùng gánh vác việc nước."
-          },
-          {
-            tag: "Trọng dụng hiền tài",
-            url: "/assets/bac_ho_huynh_thuc_khang.jpg",
-            caption: "Bác Hồ và cụ Huỳnh Thúc Kháng (1946) — Tôn trọng bậc túc nho yêu nước, đoàn kết không phân biệt đảng phái."
-          },
-          {
-            tag: "Quy tụ lòng dân",
-            url: "/assets/tuan_le_vang.jpg",
-            caption: "Tuần lễ vàng (1945) — Từ nhà tư sản đến người lao động nghèo đều dốc lòng quyên góp của cải cứu quốc."
+            id: 4,
+            navLabel: "Căn cứ 4: Cầu đồng tồn dị",
+            title: 'Phương châm "Cầu đồng tồn dị" & Thắng lợi',
+            slogan: "Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.",
+            principle: {
+              title: 'Phương châm "Cầu đồng tồn dị"',
+              quote: {
+                text: "Ai có tài, có đức, có sức, có lòng phụng sự Tổ quốc và phục vụ nhân dân thì ta đoàn kết với họ.",
+                author: "Chủ tịch Hồ Chí Minh"
+              }
+            },
+            diagramImage: {
+              url: "/assets/so_do_cau_dong_ton_di.png",
+              caption: 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'
+            },
+            proofImages: [
+              {
+                tag: "Thắng lợi đỉnh cao",
+                url: "/assets/mit_tinh_nha_hat_lon.jpg",
+                caption: "Mít tinh 19/8/1945 tại Nhà hát Lớn — Toàn dân tộc nhất tề đứng lên làm nên thắng lợi Cách mạng Tháng Tám."
+              },
+              {
+                tag: "Chính phủ đại đoàn kết",
+                url: "/assets/dai_bieu_quoc_hoi_1946.jpg",
+                caption: "Quốc hội khóa I (1946) — Mở rộng liên hiệp, quy tụ các nhân sĩ, trí thức ngoài Đảng cùng gánh vác việc nước."
+              },
+              {
+                tag: "Trọng dụng hiền tài",
+                url: "/assets/bac_ho_huynh_thuc_khang.jpg",
+                caption: "Bác Hồ và cụ Huỳnh Thúc Kháng (1946) — Tôn trọng bậc túc nho yêu nước, đoàn kết không phân biệt đảng phái."
+              },
+              {
+                tag: "Quy tụ lòng dân",
+                url: "/assets/tuan_le_vang.jpg",
+                caption: "Tuần lễ vàng (1945) — Từ nhà tư sản đến người lao động nghèo đều dốc lòng quyên góp của cải cứu quốc."
+              }
+            ]
           }
         ]
       }

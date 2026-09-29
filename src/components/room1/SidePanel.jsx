@@ -368,76 +368,81 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                         )}
                       </div>
                     )}
-                  </div>
-                )}
-              </div>
-            ) : treeTab === 3 ? (
-              <div className="tab3-grid-layout">
-                {/* CỘT TRÁI (44%): LÝ LUẬN & SƠ ĐỒ NGUYÊN TẮC (RENDER DẠNG ẢNH + ZOOM LIGHTBOX) */}
-                <div className="tab3-col-left">
-                  <div className="tab3-theory-header">
-                    <h3 className="tab3-theory-title">{currentTreeTab.principle?.title || 'Phương châm "Cầu đồng tồn dị"'}</h3>
-                  </div>
 
-                  {/* Sơ đồ nguyên tắc được render dạng ảnh bảo tàng, có nút phóng to và click mở lightbox zoom */}
-                  <div
-                    className="tab3-diagram-card"
-                    onClick={() => setLightboxImage(currentTreeTab.diagramImage || { url: '/assets/so_do_cau_dong_ton_di.png', caption: 'Sơ đồ nguyên tắc: Phương châm "Cầu đồng tồn dị"' })}
-                    title="Click phóng to sơ đồ toàn màn hình"
-                  >
-                    <div className="tab3-diagram-img-wrap">
-                      <img
-                        src={currentTreeTab.diagramImage?.url || '/assets/so_do_cau_dong_ton_di.png'}
-                        alt={currentTreeTab.diagramImage?.caption || 'Sơ đồ Cầu đồng tồn dị'}
-                        className="tab3-diagram-img"
-                      />
-                      <div className="tree-panel-zoom-icon-btn">
-                        <Maximize2 size={16} />
-                      </div>
-                    </div>
-                    <div className="tab3-diagram-caption">
-                      {currentTreeTab.diagramImage?.caption || 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'}
-                    </div>
-                  </div>
+                    {/* SUB-TAB 4: CẦU ĐỒNG TỒN DỊ & THẮNG LỢI */}
+                    {activeSub.id === 4 && (
+                      <div className="tab3-grid-layout tab2-sub4-layout">
+                        {/* CỘT TRÁI (44%): LÝ LUẬN & SƠ ĐỒ NGUYÊN TẮC */}
+                        <div className="tab3-col-left">
+                          <div className="tab3-theory-header">
+                            <h3 className="tab3-theory-title">{activeSub.principle?.title || 'Phương châm "Cầu đồng tồn dị"'}</h3>
+                          </div>
 
-                  {/* BOX TRÍCH DẪN BÁC HỒ: Font Serif nghiêng, viền trái vàng đồng */}
-                  <blockquote className="tab3-quote-card">
-                    <p className="tab3-quote-text">
-                      "{currentTreeTab.principle?.quote?.text || 'Ai có tài, có đức, có sức, có lòng phụng sự Tổ quốc và phục vụ nhân dân thì ta đoàn kết với họ.'}"
-                    </p>
-                    <footer className="tab3-quote-author">
-                      — {currentTreeTab.principle?.quote?.author || 'Chủ tịch Hồ Chí Minh'}
-                    </footer>
-                  </blockquote>
-                </div>
+                          {/* Sơ đồ nguyên tắc được render dạng ảnh bảo tàng, có nút phóng to và click mở lightbox zoom */}
+                          <div
+                            className="tab3-diagram-card"
+                            onClick={() => setLightboxImage(activeSub.diagramImage || { url: '/assets/so_do_cau_dong_ton_di.png', caption: 'Sơ đồ nguyên tắc: Phương châm "Cầu đồng tồn dị"' })}
+                            title="Click phóng to sơ đồ toàn màn hình"
+                          >
+                            <div className="tab3-diagram-img-wrap">
+                              <img
+                                src={activeSub.diagramImage?.url || '/assets/so_do_cau_dong_ton_di.png'}
+                                alt={activeSub.diagramImage?.caption || 'Sơ đồ Cầu đồng tồn dị'}
+                                className="tab3-diagram-img"
+                              />
+                              <div className="tree-panel-zoom-icon-btn">
+                                <Maximize2 size={16} />
+                              </div>
+                            </div>
+                            <div className="tab3-diagram-caption">
+                              {activeSub.diagramImage?.caption || 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'}
+                            </div>
+                          </div>
 
-                {/* CỘT PHẢI (56%): MINH CHỨNG THỰC TIỄN - ĐỦ 4 THẺ HIỆN VẬT DẠNG GRID 2x2 LẤP ĐẦY KHÔNG GIAN */}
-                <div className="tab3-col-right">
-                  <div className="tab3-proofs-grid">
-                    {currentTreeTab.proofImages?.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="tab3-photo-item"
-                        onClick={() => setLightboxImage(item)}
-                        title="Click phóng to ảnh"
-                      >
-                        <div className="tab3-photo-frame">
-                          <img
-                            src={item.url}
-                            alt={item.caption}
-                            className={`tab3-photo-img proof-img-${idx + 1}`}
-                          />
-                          <div className="tree-panel-zoom-icon-btn">
-                            <Maximize2 size={14} />
+                          {/* BOX TRÍCH DẪN BÁC HỒ */}
+                          {activeSub.principle?.quote && (
+                            <blockquote className="tab3-quote-card">
+                              <p className="tab3-quote-text">
+                                "{activeSub.principle.quote.text}"
+                              </p>
+                              <footer className="tab3-quote-author">
+                                — {activeSub.principle.quote.author}
+                              </footer>
+                            </blockquote>
+                          )}
+                        </div>
+
+                        {/* CỘT PHẢI (56%): MINH CHỨNG THỰC TIỄN - 4 THẺ HIỆN VẬT */}
+                        <div className="tab3-col-right">
+                          <div className="tab3-proofs-grid">
+                            {activeSub.proofImages?.map((item, idx) => (
+                              <div
+                                key={idx}
+                                className="tab3-photo-item"
+                                onClick={() => setLightboxImage(item)}
+                                title="Click phóng to ảnh"
+                              >
+                                <div className="tab3-photo-frame">
+                                  <img
+                                    src={item.url}
+                                    alt={item.caption}
+                                    className={`tab3-photo-img proof-img-${idx + 1}`}
+                                  />
+                                  <div className="tree-panel-zoom-icon-btn">
+                                    <Maximize2 size={14} />
+                                  </div>
+                                </div>
+                                <div className="tab3-photo-caption">
+                                  {item.caption}
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                        <div className="tab3-photo-caption">
-                          {item.caption}
-                        </div>
                       </div>
-                    ))}
+                    )}
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <div className="tree-panel-placeholder">
