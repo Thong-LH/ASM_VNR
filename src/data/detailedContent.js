@@ -51,7 +51,6 @@ const detailedContent = {
         archive: {
           image: "/assets/bac_ho_dan_toc.jpg",
           caption: "Ảnh tư liệu: Bác Hồ với đồng bào các dân tộc thiểu số.",
-          sourceName: "Báo Thông tin Đối ngoại",
           sourceUrl: "https://ttdn.vn/nghien-cuu-trao-doi/ly-luan-thuc-tien/bac-ho-voi-dong-bao-cac-dan-toc-thieu-so-va-khoi-dai-doan-ket-cac-dan-toc-97791"
         },
         quote: {
@@ -74,15 +73,18 @@ const detailedContent = {
             images: [
               {
                 url: "/assets/phu_cao_su.jpg",
-                caption: "Phu cao su làm việc dưới sự giám sát của chủ đồn điền Pháp."
+                caption: "Phu cao su làm việc dưới sự giám sát của chủ đồn điền người Pháp.",
+                sourceUrl: "https://congdoancaosu.vn/cay-cao-su-o-viet-nam-duoi-goc-nhin-lich-su-sinh-thai-1897-1975-7/"
               },
               {
                 url: "/assets/nong_dan_dap_de.webp",
-                caption: "Nông dân Bắc Kỳ đi phu gánh đất đắp đê thời Pháp thuộc."
+                caption: "Nông dân Bắc Kỳ đi phu, gánh đất đắp đê thời Pháp thuộc.",
+                sourceUrl: "https://tiasang.com.vn/de-dinh-hinh-van-minh-song-hong-4999977.html"
               },
               {
                 url: "/assets/lan_khuoi_nam.jpg",
-                caption: "Lán Khuổi Nậm (Pác Bó, Hà Quảng, Cao Bằng), nơi Nguyễn Ái Quốc chủ trì Hội nghị Trung ương 8 (10–19/5/1941)."
+                caption: "Lán Khuổi Nậm (Pác Bó, Hà Quảng, Cao Bằng), nơi Nguyễn Ái Quốc chủ trì Hội nghị Trung ương 8 (10–19/5/1941).",
+                sourceUrl: "https://baotanglichsu.vn/DataFiles/2021/10/News/Ti%E1%BA%BFng%20Vi%E1%BB%87t/18.10.2021/Lanh%20tu%20Nguyen%20Ai%20Quoc/3.jpg"
               }
             ],
             quotes: [
@@ -104,15 +106,17 @@ const detailedContent = {
             images: [
               {
                 url: "/assets/infographic_100_nguoi.png",
-                caption: "Cứ 100 người Việt Nam (1929) chỉ có 1 người là công nhân."
+                caption: "Năm 1929, cứ 100 người Việt Nam chỉ có khoảng 1 người là công nhân."
               },
               {
                 url: "/assets/cong_nhan_mo_than.jpg",
-                caption: "Mỏ than lộ thiên ở Hòn Gai (Quảng Ninh) thời Pháp thuộc."
+                caption: "Mỏ than lộ thiên ở Hòn Gai (Quảng Ninh) thời Pháp thuộc.",
+                sourceUrl: "https://baoquangninh.vn/khai-thac-than-thoi-ky-phap-thuoc-post3349315.html"
               },
               {
                 url: "/assets/cong_nhan_xe_goong.jpg",
-                caption: "Công nhân vùng mỏ Hòn Gai thời Pháp thuộc."
+                caption: "Công nhân vùng mỏ Hòn Gai thời Pháp thuộc.",
+                sourceUrl: "https://media.quangninh.gov.vn/618ca5c4-79b3-478a-8adb-4184369067f7/Libraries/HinhAnhBaiViet/Dung/N%C4%83m%202025/Th%C3%A1ng%204/22042025dungh%E1%BB%9Di%20Ph%C3%A1p%20thu%E1%BB%99c%20qua%20%E1%BA%A312.jpg"
               }
             ]
           },

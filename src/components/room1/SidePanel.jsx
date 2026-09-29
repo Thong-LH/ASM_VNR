@@ -189,22 +189,21 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                           <Maximize2 size={16} />
                         </div>
                       </div>
-                      {/* Thẻ chú thích bảo tàng liền mạch (Museum Caption Plate) */}
-                      <div className="tree-caption-plate">
-                        <span className="tree-caption-text">{currentTreeTab.archive.caption}</span>
-                        {currentTreeTab.archive.sourceUrl && (
+                      <div className="tree-panel-caption">
+                        {currentTreeTab.archive.sourceUrl ? (
                           <a
                             href={currentTreeTab.archive.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="tree-source-chip"
-                            title="Mở bài viết tư liệu gốc trên Báo Thông tin Đối ngoại"
+                            className="caption-citation-link"
+                            title="Mở bài viết tư liệu gốc (Báo Thông tin Đối ngoại)"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <span className="source-chip-dot"></span>
-                            <span className="source-chip-label">Nguồn: {currentTreeTab.archive.sourceName || 'Báo TTĐN'}</span>
-                            <ExternalLink size={11} className="source-chip-icon" />
+                            <span>{currentTreeTab.archive.caption}</span>
+                            <ExternalLink size={13} className="caption-citation-icon" />
                           </a>
+                        ) : (
+                          currentTreeTab.archive.caption
                         )}
                       </div>
                     </div>
@@ -257,7 +256,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                             <div
                               key={i}
                               className="tab2-strip-item"
-                              onClick={() => setLightboxImage(img)}
+                              onClick={() => setLightboxImage({ url: img.url, note: img.caption, sourceUrl: img.sourceUrl })}
                               title="Click phóng to ảnh"
                             >
                               <div className="tab2-strip-img-wrap">
@@ -266,7 +265,23 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                                   <Maximize2 size={15} />
                                 </div>
                               </div>
-                              <div className="tab2-strip-caption">{img.caption}</div>
+                              <div className="tab2-strip-caption">
+                                {img.sourceUrl ? (
+                                  <a
+                                    href={img.sourceUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="caption-citation-link"
+                                    title="Mở bài viết tư liệu gốc"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <span>{img.caption}</span>
+                                    <ExternalLink size={12} className="caption-citation-icon" />
+                                  </a>
+                                ) : (
+                                  img.caption
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -293,7 +308,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                           {activeSub.images?.[0] && (
                             <div
                               className="tab2-strip-item infor-item"
-                              onClick={() => setLightboxImage(activeSub.images[0])}
+                              onClick={() => setLightboxImage({ url: activeSub.images[0].url, note: activeSub.images[0].caption, sourceUrl: activeSub.images[0].sourceUrl })}
                               title="Click phóng to ảnh"
                             >
                               <div className="tab2-sub2-infor-wrap">
@@ -306,7 +321,23 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                                   <Maximize2 size={16} />
                                 </div>
                               </div>
-                              <div className="tab2-strip-caption">{activeSub.images[0].caption}</div>
+                              <div className="tab2-strip-caption">
+                                {activeSub.images[0].sourceUrl ? (
+                                  <a
+                                    href={activeSub.images[0].sourceUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="caption-citation-link"
+                                    title="Mở bài viết tư liệu gốc"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <span>{activeSub.images[0].caption}</span>
+                                    <ExternalLink size={12} className="caption-citation-icon" />
+                                  </a>
+                                ) : (
+                                  activeSub.images[0].caption
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
@@ -317,7 +348,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                             <div
                               key={i}
                               className="tab2-strip-item"
-                              onClick={() => setLightboxImage(img)}
+                              onClick={() => setLightboxImage({ url: img.url, note: img.caption, sourceUrl: img.sourceUrl })}
                               title="Click phóng to ảnh"
                             >
                               <div className="tab2-sub2-stacked-wrap">
@@ -330,7 +361,23 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                                   <Maximize2 size={15} />
                                 </div>
                               </div>
-                              <div className="tab2-strip-caption">{img.caption}</div>
+                              <div className="tab2-strip-caption">
+                                {img.sourceUrl ? (
+                                  <a
+                                    href={img.sourceUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="caption-citation-link"
+                                    title="Mở bài viết tư liệu gốc"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <span>{img.caption}</span>
+                                    <ExternalLink size={12} className="caption-citation-icon" />
+                                  </a>
+                                ) : (
+                                  img.caption
+                                )}
+                              </div>
                             </div>
                           ))}
                         </div>
@@ -363,7 +410,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                               <div
                                 key={i}
                                 className="tab2-strip-item"
-                                onClick={() => setLightboxImage(img)}
+                                onClick={() => setLightboxImage({ url: img.url, note: img.caption, sourceUrl: img.sourceUrl })}
                                 title="Click phóng to ảnh"
                               >
                                 <div className="tab2-strip-img-wrap">
@@ -376,7 +423,23 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                                     <Maximize2 size={15} />
                                   </div>
                                 </div>
-                                <div className="tab2-strip-caption">{img.caption}</div>
+                                <div className="tab2-strip-caption">
+                                  {img.sourceUrl ? (
+                                    <a
+                                      href={img.sourceUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="caption-citation-link"
+                                      title="Mở bài viết tư liệu gốc"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <span>{img.caption}</span>
+                                      <ExternalLink size={12} className="caption-citation-icon" />
+                                    </a>
+                                  ) : (
+                                    img.caption
+                                  )}
+                                </div>
                               </div>
                             ))}
                           </div>
@@ -434,7 +497,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                               <div
                                 key={idx}
                                 className="tab3-photo-item"
-                                onClick={() => setLightboxImage(item)}
+                                onClick={() => setLightboxImage({ url: item.url, note: item.caption, sourceUrl: item.sourceUrl })}
                                 title="Click phóng to ảnh"
                               >
                                 <div className="tab3-photo-frame">
@@ -448,7 +511,21 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                                   </div>
                                 </div>
                                 <div className="tab3-photo-caption">
-                                  {item.caption}
+                                  {item.sourceUrl ? (
+                                    <a
+                                      href={item.sourceUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="caption-citation-link"
+                                      title="Mở bài viết tư liệu gốc"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <span>{item.caption}</span>
+                                      <ExternalLink size={12} className="caption-citation-icon" />
+                                    </a>
+                                  ) : (
+                                    item.caption
+                                  )}
                                 </div>
                               </div>
                             ))}
@@ -915,16 +992,16 @@ function LightboxModal({ lightboxImage, onClose }) {
             textAlign: 'center',
             maxWidth: '85vw',
             lineHeight: '1.5',
-            background: 'rgba(15, 23, 42, 0.95)',
-            padding: '10px 22px',
-            borderRadius: '10px',
-            border: '1px solid rgba(255, 146, 43, 0.3)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+            background: 'rgba(15, 23, 42, 0.9)',
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: '1px solid rgba(249, 115, 22, 0.4)',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '10px'
+            gap: '8px'
           }}>
             <span>{imgNote}</span>
             {lightboxImage?.sourceUrl && (
@@ -932,16 +1009,16 @@ function LightboxModal({ lightboxImage, onClose }) {
                 href={lightboxImage.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="tree-source-chip"
+                className="caption-citation-link"
                 style={{
-                  fontSize: '0.8rem',
-                  padding: '3px 10px'
+                  color: '#fb923c',
+                  marginLeft: '6px',
+                  fontWeight: 600,
+                  fontSize: '0.92rem'
                 }}
                 title="Mở bài viết tư liệu gốc"
               >
-                <span className="source-chip-dot"></span>
-                <span>Nguồn: {lightboxImage.sourceName || 'Báo TTĐN'}</span>
-                <ExternalLink size={11} className="source-chip-icon" />
+                (Xem bài viết gốc <ExternalLink size={13} style={{ marginLeft: 2 }} />)
               </a>
             )}
           </div>
