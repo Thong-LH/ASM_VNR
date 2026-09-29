@@ -102,7 +102,7 @@ const detailedContent = {
             images: [
               {
                 url: "/assets/infographic_100_nguoi.png",
-                caption: "Infographic: Cứ 100 người Việt Nam (1929) chỉ có 1 người là công nhân."
+                caption: "Cứ 100 người Việt Nam (1929) chỉ có 1 người là công nhân."
               },
               {
                 url: "/assets/cong_nhan_mo_than.jpg",

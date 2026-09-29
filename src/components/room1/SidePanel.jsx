@@ -279,7 +279,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                             <div
                               className="tab2-strip-item infor-item"
                               onClick={() => setLightboxImage(activeSub.images[0])}
-                              title="Click phóng to infographic"
+                              title="Click phóng to ảnh"
                             >
                               <div className="tab2-sub2-infor-wrap">
                                 <img
