@@ -19,7 +19,7 @@ const detailedContent = {
         subtitle: "Xác định chủ thể, nền tảng và hạt nhân lãnh đạo theo tư tưởng Hồ Chí Minh.",
         diagram: {
           image: "/assets/so_do_dai_doan_ket.png",
-          caption: "Sơ đồ 3 vòng tròn đồng tâm: Cấu trúc khối Đại đoàn kết toàn dân tộc",
+          caption: "Cấu trúc khối Đại đoàn kết toàn dân tộc",
           rings: [
             {
               ringName: "Vòng ngoài cùng",
@@ -50,7 +50,8 @@ const detailedContent = {
         },
         archive: {
           image: "/assets/bac_ho_dan_toc.jpg",
-          caption: "Ảnh tư liệu: Bác Hồ với đồng bào các dân tộc thiểu số."
+          caption: "Ảnh tư liệu: Bác Hồ với đồng bào các dân tộc thiểu số.",
+          sourceUrl: "https://ttdn.vn/nghien-cuu-trao-doi/ly-luan-thuc-tien/bac-ho-voi-dong-bao-cac-dan-toc-thieu-so-va-khoi-dai-doan-ket-cac-dan-toc-97791"
         },
         quote: {
           text: "Đó là nền gốc của đại đoàn kết. Nó cũng như cái nền của nhà, gốc của cây.",
@@ -80,7 +81,7 @@ const detailedContent = {
               },
               {
                 url: "/assets/lan_khuoi_nam.jpg",
-                caption: "Lán Khuổi Nậm (Pác Bó, Cao Bằng) - nơi họp Hội nghị TW 8 (5/1941)."
+                caption: "Lán Khuổi Nậm (Pác Bó, Hà Quảng, Cao Bằng), nơi Nguyễn Ái Quốc chủ trì Hội nghị Trung ương 8 (10–19/5/1941)."
               }
             ],
             quotes: [
@@ -106,11 +107,11 @@ const detailedContent = {
               },
               {
                 url: "/assets/cong_nhan_mo_than.jpg",
-                caption: "Khai trường mỏ than Hòn Gai thời Pháp thuộc — Nơi tập trung giai cấp công nhân đầu thế kỷ XX."
+                caption: "Mỏ than lộ thiên ở Hòn Gai (Quảng Ninh) thời Pháp thuộc."
               },
               {
                 url: "/assets/cong_nhan_xe_goong.jpg",
-                caption: "Công nhân đẩy xe goòng trên đường ray mỏ than — Lực lượng công nhân non trẻ (hơn 1% dân số)."
+                caption: "Công nhân vùng mỏ Hòn Gai thời Pháp thuộc."
               }
             ]
           },
@@ -122,11 +123,11 @@ const detailedContent = {
             images: [
               {
                 url: "/assets/hoi_nghi_dien_hong.jpeg",
-                caption: "Tranh tư liệu: Hội nghị Diên Hồng (Nhà Trần) — Cội nguồn truyền thống 'Lấy dân làm gốc'."
+                caption: "Hội nghị Diên Hồng thời Trần: các bô lão đồng thanh hô “Đánh!” trước cuộc kháng chiến chống quân Nguyên Mông."
               },
               {
                 url: "/assets/bac_ho_nong_dan.jpg",
-                caption: "Ảnh tư liệu: Bác Hồ cùng bà con nông dân thu hoạch lúa (1954) — Gần dân, trọng dân, tin dân."
+                caption: "Chủ tịch Hồ Chí Minh thăm hỏi bà con nông dân trên đồng lúa."
               }
             ],
             highlightQuote: {

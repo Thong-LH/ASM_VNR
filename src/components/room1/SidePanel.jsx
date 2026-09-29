@@ -1,6 +1,6 @@
 import React from 'react';
 import { createPortal } from 'react-dom';
-import { X, Maximize2, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { X, Maximize2, ZoomIn, ZoomOut, RotateCcw, ExternalLink } from 'lucide-react';
 import ThreeStageTimeline from '../common/ThreeStageTimeline';
 import TheoryPracticeCompare from '../common/TheoryPracticeCompare';
 import GlobeCoreLessons from '../common/GlobeCoreLessons';
@@ -177,7 +177,7 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                     <div className="tree-panel-right">
                       <div
                         className="tree-panel-img-wrap archive"
-                        onClick={() => setLightboxImage({ url: currentTreeTab.archive.image, note: currentTreeTab.archive.caption })}
+                        onClick={() => setLightboxImage({ url: currentTreeTab.archive.image, note: currentTreeTab.archive.caption, sourceUrl: currentTreeTab.archive.sourceUrl })}
                         title="Click phóng to ảnh"
                       >
                         <img
@@ -190,7 +190,21 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                         </div>
                       </div>
                       <div className="tree-panel-caption">
-                        {currentTreeTab.archive.caption}
+                        {currentTreeTab.archive.sourceUrl ? (
+                          <a
+                            href={currentTreeTab.archive.sourceUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="caption-citation-link"
+                            title="Mở bài viết tư liệu gốc (Báo Thông tin Đối ngoại)"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <span>{currentTreeTab.archive.caption}</span>
+                            <ExternalLink size={13} className="caption-citation-icon" />
+                          </a>
+                        ) : (
+                          currentTreeTab.archive.caption
+                        )}
                       </div>
                     </div>
                   </div>
@@ -904,9 +918,31 @@ function LightboxModal({ lightboxImage, onClose }) {
             padding: '10px 20px',
             borderRadius: '8px',
             border: '1px solid rgba(249, 115, 22, 0.4)',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.5)'
+            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            display: 'flex',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px'
           }}>
-            {imgNote}
+            <span>{imgNote}</span>
+            {lightboxImage?.sourceUrl && (
+              <a
+                href={lightboxImage.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="caption-citation-link"
+                style={{
+                  color: '#fb923c',
+                  marginLeft: '6px',
+                  fontWeight: 600,
+                  fontSize: '0.92rem'
+                }}
+                title="Mở bài viết tư liệu gốc"
+              >
+                (Xem bài viết gốc <ExternalLink size={13} style={{ marginLeft: 2 }} />)
+              </a>
+            )}
           </div>
         )}
       </div>
