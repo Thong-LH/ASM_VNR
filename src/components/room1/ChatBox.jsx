@@ -14,7 +14,7 @@ function ChatBox({
     setChatOpen(false);
     if (setSelectedObjectId) setSelectedObjectId(objId);
     if (setShowUI) setShowUI(true);
-    if (setMascotState) setMascotState('pointing');
+    if (setMascotState) setMascotState('idle');
   };
 
   const handleStartTour = () => {
@@ -31,7 +31,6 @@ function ChatBox({
         <div className="chat-header">
           <div className="chat-header-info">
             <span className="chat-title">Trợ lý ảo Nhóm 7</span>
-            <span className="chat-subtitle">● Sẵn sàng hỗ trợ</span>
           </div>
           <div className="chat-header-actions">
             <button
@@ -58,7 +57,7 @@ function ChatBox({
                 Hôm nay, chúng ta sẽ cùng nhau giải mã một nguồn lực nội sinh mang sức mạnh vô địch của Cách mạng Việt Nam: <strong style={{ color: '#ffd700' }}>Đại đoàn kết toàn dân tộc</strong>.
               </p>
               <p style={{ margin: '0 0 0.9rem 0' }}>
-                Bạn đã sẵn sàng chưa? Hãy nhấp vào các danh mục dưới đây hoặc click trực tiếp vào từng kỷ vật trên mặt bàn để khám phá hành trình nhé:
+                Bạn đã sẵn sàng chưa?
               </p>
 
               {/* Danh sách nút danh mục liền mạch, không icon, không tóm tắt */}

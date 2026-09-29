@@ -187,7 +187,8 @@ function Mascot({
           if (isRoadmapFlipped) {
             setActionState('welcome');
           } else {
-            setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+            const fallback = mascotState === 'pointing' ? 'idle' : mascotState;
+            setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : fallback);
           }
         }
       });
@@ -204,7 +205,8 @@ function Mascot({
       if (isRoadmapFlipped) {
         setActionState('welcome');
       } else {
-        setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : mascotState);
+        const fallback = mascotState === 'pointing' ? 'idle' : mascotState;
+        setActionState(selectedObjectId ? (mascotState === 'thinking' ? 'thinking' : 'pointing') : fallback);
       }
     }
   }, [selectedObjectId, roomData, exitDirection, entryDirection, defaultPos, mascotState, chatOpen, isRoadmapFlipped]);
@@ -261,7 +263,7 @@ function Mascot({
         setActionState('pointing');
       }
     } else {
-      setActionState(mascotState);
+      setActionState(mascotState === 'pointing' ? 'idle' : mascotState);
     }
   }, [mascotState, selectedObjectId, chatOpen, isRoadmapFlipped]);
 

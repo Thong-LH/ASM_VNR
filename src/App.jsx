@@ -247,7 +247,14 @@ export default function App() {
         camera={{ position: [0, 0, 5], fov: 50, near: 0.1, far: 50 }}
         gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
         dpr={[1, 1.5]}
-        onPointerMissed={() => { if (!isEditMode) { setSelectedObjectId(null); setIsRoadmapFlipped(false); } }}
+        onPointerMissed={() => {
+          if (!isEditMode) {
+            setSelectedObjectId(null);
+            setIsRoadmapFlipped(false);
+            setChatOpen(false);
+            setMascotState('idle');
+          }
+        }}
       >
         <ambientLight intensity={0.8} />
         <directionalLight position={[0, 5, 5]} intensity={1} />
@@ -329,7 +336,7 @@ export default function App() {
         showUI={showUI}
         isEditMode={isEditMode}
         roomData={currentRoomData}
-        onClose={() => { setSelectedObjectId(null); setRoadmapStage(0); setIsRoadmapFlipped(false); }}
+        onClose={() => { setSelectedObjectId(null); setRoadmapStage(0); setIsRoadmapFlipped(false); setMascotState('idle'); }}
         detailedContent={currentRoomConfig.detailedContent}
         tourActive={tourActive}
         tourIndex={tourIndex}
