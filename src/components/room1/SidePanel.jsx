@@ -189,21 +189,22 @@ function SidePanel({ selectedObjectId, showUI, isEditMode, roomData, onClose, de
                           <Maximize2 size={16} />
                         </div>
                       </div>
-                      <div className="tree-panel-caption">
-                        {currentTreeTab.archive.sourceUrl ? (
+                      {/* Thẻ chú thích bảo tàng liền mạch (Museum Caption Plate) */}
+                      <div className="tree-caption-plate">
+                        <span className="tree-caption-text">{currentTreeTab.archive.caption}</span>
+                        {currentTreeTab.archive.sourceUrl && (
                           <a
                             href={currentTreeTab.archive.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="caption-citation-link"
-                            title="Mở bài viết tư liệu gốc (Báo Thông tin Đối ngoại)"
+                            className="tree-source-chip"
+                            title="Mở bài viết tư liệu gốc trên Báo Thông tin Đối ngoại"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <span>{currentTreeTab.archive.caption}</span>
-                            <ExternalLink size={13} className="caption-citation-icon" />
+                            <span className="source-chip-dot"></span>
+                            <span className="source-chip-label">Nguồn: {currentTreeTab.archive.sourceName || 'Báo TTĐN'}</span>
+                            <ExternalLink size={11} className="source-chip-icon" />
                           </a>
-                        ) : (
-                          currentTreeTab.archive.caption
                         )}
                       </div>
                     </div>
@@ -914,16 +915,16 @@ function LightboxModal({ lightboxImage, onClose }) {
             textAlign: 'center',
             maxWidth: '85vw',
             lineHeight: '1.5',
-            background: 'rgba(15, 23, 42, 0.9)',
-            padding: '10px 20px',
-            borderRadius: '8px',
-            border: '1px solid rgba(249, 115, 22, 0.4)',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.5)',
+            background: 'rgba(15, 23, 42, 0.95)',
+            padding: '10px 22px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255, 146, 43, 0.3)',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
             display: 'flex',
             flexWrap: 'wrap',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '8px'
+            gap: '10px'
           }}>
             <span>{imgNote}</span>
             {lightboxImage?.sourceUrl && (
@@ -931,16 +932,16 @@ function LightboxModal({ lightboxImage, onClose }) {
                 href={lightboxImage.sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="caption-citation-link"
+                className="tree-source-chip"
                 style={{
-                  color: '#fb923c',
-                  marginLeft: '6px',
-                  fontWeight: 600,
-                  fontSize: '0.92rem'
+                  fontSize: '0.8rem',
+                  padding: '3px 10px'
                 }}
                 title="Mở bài viết tư liệu gốc"
               >
-                (Xem bài viết gốc <ExternalLink size={13} style={{ marginLeft: 2 }} />)
+                <span className="source-chip-dot"></span>
+                <span>Nguồn: {lightboxImage.sourceName || 'Báo TTĐN'}</span>
+                <ExternalLink size={11} className="source-chip-icon" />
               </a>
             )}
           </div>

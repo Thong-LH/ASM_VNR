@@ -51,6 +51,7 @@ const detailedContent = {
         archive: {
           image: "/assets/bac_ho_dan_toc.jpg",
           caption: "Ảnh tư liệu: Bác Hồ với đồng bào các dân tộc thiểu số.",
+          sourceName: "Báo Thông tin Đối ngoại",
           sourceUrl: "https://ttdn.vn/nghien-cuu-trao-doi/ly-luan-thuc-tien/bac-ho-voi-dong-bao-cac-dan-toc-thieu-so-va-khoi-dai-doan-ket-cac-dan-toc-97791"
         },
         quote: {
