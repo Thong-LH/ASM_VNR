@@ -156,7 +156,7 @@ const detailedContent = {
             },
             diagramImage: {
               url: "/assets/so_do_cau_dong_ton_di.png",
-              caption: 'Sơ đồ nguyên tắc phương châm "Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'
+              caption: '"Cầu đồng tồn dị" — Lấy Tổ quốc trên hết làm điểm tương đồng tối cao.'
             },
             proofImages: [
               {
